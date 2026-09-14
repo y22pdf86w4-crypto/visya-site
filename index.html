@@ -316,7 +316,8 @@
     const [c,ini]=av[m.u]||['#5865f2','?'];
     const el=document.createElement('div');
     el.className='msg'+(m.b?' bot':'');
-    el.innerHTML=`<div class="av" style="background:${c}">${ini}</div><div class="bd"><div class="nm">${m.u}${m.b?'<span class="botbadge">BOT</span>':''}<span>hoje</span></div><div class="tx">${m.t}</div></div>`;
+    const avInner=m.b?'<svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg>':ini;
+    el.innerHTML=`<div class="av" style="background:${c}">${avInner}</div><div class="bd"><div class="nm">${m.u}${m.b?'<span class="botbadge">BOT</span>':''}<span>hoje</span></div><div class="tx">${m.t}</div></div>`;
     chat.appendChild(el);
     while(chat.children.length>6) chat.removeChild(chat.firstChild);
     i++;
@@ -336,7 +337,7 @@
     const iaMsg=(m)=>{
       const el=document.createElement('div');
       el.className='msg'+(m.b?' bot':'');
-      const c=m.b?'#5865f2':'#f04747', ini=m.b?'V':'J';
+      const c=m.b?'#5865f2':'#f04747', ini=m.b?'<svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg>':'J';
       const nm=m.b?`VISYA<span class="botbadge">BOT</span><span>hoje</span>`:`joão <span>líder · hoje</span>`;
       el.innerHTML=`<div class="av" style="background:${c}">${ini}</div><div class="bd"><div class="nm">${nm}</div><div class="tx">${m.t}</div></div>`;
       return el;
@@ -344,7 +345,7 @@
     const iaTyping=()=>{
       const el=document.createElement('div');
       el.className='msg bot typing';
-      el.innerHTML=`<div class="av" style="background:#5865f2">V</div><div class="bd"><div class="nm">VISYA<span class="botbadge">BOT</span><span>hoje</span></div><div class="tx"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+      el.innerHTML=`<div class="av" style="background:#5865f2"><svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg></div><div class="bd"><div class="nm">VISYA<span class="botbadge">BOT</span><span>hoje</span></div><div class="tx"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
       return el;
     };
     if(reduce){ IASEQ.forEach(m=>ia.appendChild(iaMsg(m))); }
