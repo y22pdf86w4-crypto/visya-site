@@ -1,0 +1,379 @@
+<title>VISYA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    --paper:#f4f3ef; --ink:#0a0a0b; --ink2:#54545c; --line:#dedcd4;
+    --sig:#1f3bff; --disc:#5865f2;
+    --disp:"Bricolage Grotesque", system-ui, sans-serif;
+    --mono:"Space Mono", ui-monospace, monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--mono);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;}
+  ::selection{background:var(--sig);color:#fff;}
+  .idx{font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--sig);}
+  .btn{font-family:var(--mono);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;padding:15px 24px;border-radius:3px;cursor:pointer;border:1px solid var(--ink);transition:transform .12s,background .15s,color .15s;display:inline-flex;gap:9px;align-items:center;}
+  .btn-p{background:var(--sig);border-color:var(--sig);color:#fff;} .btn-p:hover{transform:translateY(-2px);}
+  .btn-o{background:transparent;color:var(--ink);} .btn-o:hover{background:var(--ink);color:var(--paper);}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:40;backdrop-filter:blur(10px);background:rgba(244,243,239,.78);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;height:66px;gap:20px;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:1.25rem;letter-spacing:.02em;}
+  .brand svg{width:26px;height:26px;}
+  nav .nl{margin-left:auto;display:flex;gap:24px;align-items:center;font-size:.78rem;text-transform:uppercase;letter-spacing:.13em;}
+  nav .nl a:hover{color:var(--sig);}
+  @media(max-width:820px){nav .nl a.hm{display:none;}}
+
+  /* HERO */
+  .hero{padding:118px 0 60px;border-bottom:1px solid var(--line);}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:34px;}}
+  .kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);margin-bottom:14px;}
+  h1{font-family:var(--disp);font-weight:800;font-size:clamp(3.4rem,10vw,8rem);line-height:.86;letter-spacing:-.03em;margin:0;}
+  .hero p{font-family:var(--disp);font-weight:400;font-size:clamp(1.05rem,2.2vw,1.45rem);max-width:520px;margin:18px 0 0;color:var(--ink2);line-height:1.4;}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+
+  /* CHAT DEMO */
+  .demo{background:#141419;border:1px solid #23232c;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px rgba(15,15,30,.25);}
+  .demo-top{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid #23232c;color:#a9a9b6;font-size:.82rem;}
+  .demo-top .hash{color:#6b6b78;font-weight:700;}
+  .demo-top .live{margin-left:auto;display:flex;align-items:center;gap:6px;color:#43b581;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;}
+  .demo-top .live i{width:7px;height:7px;border-radius:50%;background:#43b581;display:inline-block;animation:blink 1.4s infinite;}
+  @keyframes blink{50%{opacity:.3;}}
+  .msgs{padding:16px 18px;min-height:330px;display:flex;flex-direction:column;gap:14px;font-family:var(--disp);}
+  .msg{display:flex;gap:11px;align-items:flex-start;opacity:0;transform:translateY(8px);animation:rise .4s forwards;}
+  @keyframes rise{to{opacity:1;transform:none;}}
+  .msg .av{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;color:#fff;font-size:.85rem;}
+  .msg .bd .nm{font-weight:700;font-size:.9rem;color:#fff;}
+  .msg .bd .nm span{font-size:.68rem;color:#6b6b78;font-weight:400;margin-left:8px;font-family:var(--mono);}
+  .msg .bd .tx{color:#c9c9d4;font-size:.95rem;line-height:1.35;margin-top:1px;}
+  .msg .bd .tx b{color:#fff;}
+  .msg.bot .nm{color:#c9b8ff;}
+  .botbadge{background:var(--disc);color:#fff;font-size:.6rem;font-family:var(--mono);padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle;letter-spacing:.05em;}
+
+  /* MARQUEE */
+  .marq{background:var(--ink);color:var(--paper);padding:15px 0;overflow:hidden;white-space:nowrap;}
+  .marq div{display:inline-block;animation:scroll 28s linear infinite;font-family:var(--disp);font-weight:700;font-size:1.35rem;}
+  .marq span{margin:0 24px;opacity:.55;} .marq b{color:#7d8bff;}
+  @keyframes scroll{to{transform:translateX(-50%);}}
+
+  section{padding:104px 0;border-bottom:1px solid var(--line);}
+  .lead{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:end;margin-bottom:50px;}
+  @media(max-width:820px){.lead{grid-template-columns:1fr;gap:14px;}}
+  .lead h2{font-family:var(--disp);font-weight:800;font-size:clamp(2.1rem,5vw,3.6rem);line-height:.98;letter-spacing:-.02em;margin:.2em 0 0;text-wrap:balance;}
+  .lead .desc{font-family:var(--disp);color:var(--ink2);font-size:1.12rem;line-height:1.4;}
+
+  /* RECURSOS */
+  .feat{border-top:1px solid var(--line);}
+  .feat .row{display:grid;grid-template-columns:70px 1fr 1.2fr;gap:22px;padding:24px 0;border-bottom:1px solid var(--line);align-items:baseline;transition:padding-left .2s,background .2s;}
+  .feat .row:hover{padding-left:14px;background:linear-gradient(90deg,rgba(31,59,255,.05),transparent);}
+  .feat .n{font-size:.82rem;color:var(--ink2);}
+  .feat .t{font-family:var(--disp);font-weight:700;font-size:clamp(1.3rem,3vw,2rem);}
+  .feat .d{font-family:var(--disp);color:var(--ink2);font-size:1rem;line-height:1.4;}
+  @media(max-width:760px){.feat .row{grid-template-columns:36px 1fr;}.feat .d{grid-column:1/-1;}}
+
+  /* COMANDOS */
+  .cmdbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px;}
+  .cmdbar input{flex:1;min-width:220px;font-family:var(--mono);font-size:.95rem;padding:14px 16px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);}
+  .cmdbar input:focus{outline:2px solid var(--sig);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 14px;border:1px solid var(--line);border-radius:99px;cursor:pointer;background:#fff;color:var(--ink2);}
+  .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .cmdgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:820px){.cmdgrid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.cmdgrid{grid-template-columns:1fr;}}
+  .cmd{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:#fff;transition:border-color .15s,transform .1s;}
+  .cmd:hover{border-color:var(--sig);transform:translateY(-2px);}
+  .cmd code{font-family:var(--mono);font-weight:700;color:var(--sig);font-size:.98rem;}
+  .cmd p{font-family:var(--disp);color:var(--ink2);font-size:.9rem;margin:6px 0 0;line-height:1.35;}
+  .cmd .cat{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.1em;color:#9a99a4;}
+  .empty{grid-column:1/-1;text-align:center;color:var(--ink2);font-family:var(--disp);padding:30px;}
+
+  /* JOGOS */
+  .games{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media(max-width:900px){.games{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:620px){.games{grid-template-columns:repeat(2,1fr);}}
+  .game{border:1px solid var(--line);border-radius:14px;padding:22px 18px;background:#fff;transition:transform .12s,border-color .15s,box-shadow .15s;}
+  .game:hover{transform:translateY(-3px);border-color:var(--sig);box-shadow:0 16px 34px rgba(31,59,255,.12);}
+  .game .em{font-size:2rem;line-height:1;}
+  .game h3{font-family:var(--disp);font-weight:700;font-size:1.12rem;margin:12px 0 4px;}
+  .game p{font-family:var(--disp);color:var(--ink2);font-size:.88rem;margin:0 0 12px;line-height:1.35;}
+  .game code{font-family:var(--mono);font-size:.78rem;color:var(--sig);font-weight:700;}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #26262e;border-radius:12px;overflow:hidden;background:#141417;}
+  .stats .s{padding:30px 22px;border-right:1px solid #26262e;}
+  .stats .s:last-child{border-right:0;}
+  .stats b{font-family:var(--disp);font-weight:800;font-size:clamp(2rem,5vw,3.2rem);display:block;line-height:1;color:#fff;}
+  .stats b em{color:#7d8bff;font-style:normal;}
+  .stats span{color:#8a8a95;font-size:.85rem;}
+  @media(max-width:720px){.stats{grid-template-columns:1fr 1fr;}.stats .s:nth-child(2){border-right:0;}.stats .s:nth-child(-n+2){border-bottom:1px solid #26262e;}}
+
+  /* PAINEL */
+  .dark{background:var(--ink);color:var(--paper);}
+  .dark .lead h2,.dark .lead .desc{color:var(--paper);}
+  .mock{background:#141417;border:1px solid #26262e;border-radius:14px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .mock .bar{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid #26262e;font-size:.78rem;color:#8a8a95;}
+  .mock .dt{width:11px;height:11px;border-radius:50%;background:#33333c;}
+  .mock .body{display:grid;grid-template-columns:210px 1fr;min-height:330px;}
+  .mock .side{border-right:1px solid #26262e;padding:16px;display:flex;flex-direction:column;gap:5px;}
+  .mock .srv{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;font-family:var(--disp);font-weight:700;background:#1c1c22;}
+  .mock .it{padding:9px 10px;border-radius:8px;color:#8a8a95;font-size:.88rem;}
+  .mock .it.on{background:rgba(31,59,255,.16);color:#fff;}
+  .mock .main{padding:20px;}
+  .mock .mh{font-family:var(--disp);font-weight:800;font-size:1.3rem;margin:0 0 16px;}
+  .mock .tog{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border:1px solid #26262e;border-radius:10px;margin-bottom:9px;font-family:var(--disp);}
+  .mock .sw{width:42px;height:24px;border-radius:99px;background:#33333c;position:relative;flex:none;}
+  .mock .sw.on{background:var(--sig);}
+  .mock .sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
+  .mock .sw.on::after{left:21px;}
+  @media(max-width:640px){.mock .body{grid-template-columns:1fr;}.mock .side{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid #26262e;}}
+
+  /* FAQ */
+  details{border-bottom:1px solid var(--line);padding:20px 0;}
+  details summary{font-family:var(--disp);font-weight:700;font-size:1.15rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::after{content:"+";color:var(--sig);font-weight:700;}
+  details[open] summary::after{content:"–";}
+  details p{font-family:var(--disp);color:var(--ink2);margin:14px 0 0;line-height:1.5;}
+
+  .final{text-align:center;}
+  .final h2{font-family:var(--disp);font-weight:800;font-size:clamp(2.6rem,10vw,7rem);line-height:.86;letter-spacing:-.03em;margin:0 0 22px;}
+  footer{background:var(--ink);color:var(--paper);padding:44px 0;}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.84rem;color:#8a8a95;}
+  footer .fl{display:flex;gap:20px;text-transform:uppercase;letter-spacing:.12em;} footer a:hover{color:#fff;}
+  @media(prefers-reduced-motion:reduce){.marq div,.msg{animation:none;opacity:1;transform:none;}}
+</style>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
+
+<nav><div class="wrap">
+  <div class="brand"><svg><use href="#v"/></svg> VISYA</div>
+  <div class="nl">
+    <a class="hm" href="#recursos">Recursos</a>
+    <a class="hm" href="#jogos">Jogos</a>
+    <a class="hm" href="#comandos">Comandos</a>
+    <a class="hm" href="#painel">Painel</a>
+    <a href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ↗</a>
+  </div>
+</div></nav>
+
+<div class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="kicker">Servidor Oficial da NEXT Guild FF</div>
+    <h1>VISYA</h1>
+    <p>O organismo que administra seu servidor. Moderação, níveis, economia e IA — vivos, no seu controle.</p>
+    <div class="cta">
+      <a class="btn btn-p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord</a>
+      <a class="btn btn-o" href="https://discord.gg/qJYdgTnZh" target="_blank" rel="noopener">Entrar no servidor</a>
+    </div>
+  </div>
+  <div class="demo">
+    <div class="demo-top"><span class="hash">#</span> geral <span class="live"><i></i> ao vivo</span></div>
+    <div class="msgs" id="chat"></div>
+  </div>
+</div></div>
+
+<div class="marq"><div>
+  <span>MODERAÇÃO</span><b>✦</b><span>NÍVEIS</span><b>✦</b><span>ECONOMIA</span><b>✦</b><span>SOUNDBOARD</span><b>✦</b><span>IA</span><b>✦</b><span>SORTEIOS</span><b>✦</b><span>JOGOS</span><b>✦</b><span>ONBOARDING</span><b>✦</b>
+  <span>MODERAÇÃO</span><b>✦</b><span>NÍVEIS</span><b>✦</b><span>ECONOMIA</span><b>✦</b><span>SOUNDBOARD</span><b>✦</b><span>IA</span><b>✦</b><span>SORTEIOS</span><b>✦</b><span>JOGOS</span><b>✦</b><span>ONBOARDING</span><b>✦</b>
+</div></div>
+
+<section id="recursos"><div class="wrap">
+  <div class="lead"><div><div class="idx">01 — Recursos</div><h2>Uma criatura de mil funções</h2></div>
+  <div class="desc">Cada módulo roda sozinho, 24 horas. Você liga o que quiser — por servidor.</div></div>
+  <div class="feat">
+    <div class="row"><div class="n">/01</div><div class="t">Moderação</div><div class="d">Advertências, castigo, anti-raid, anti-flood e AutoMod nativo. A ordem sem esforço.</div></div>
+    <div class="row"><div class="n">/02</div><div class="t">Níveis & XP</div><div class="d">Ranking por mensagens e voz, com cartão de nível gerado em imagem.</div></div>
+    <div class="row"><div class="n">/03</div><div class="t">Economia & Loja</div><div class="d">Coins, daily, cassino, loja de cargos e transferências entre membros.</div></div>
+    <div class="row"><div class="n">/04</div><div class="t">Soundboard</div><div class="d">400+ sons do Brasil na call, com busca por nome e painel de botões.</div></div>
+    <div class="row"><div class="n">/05</div><div class="t">IA integrada</div><div class="d">Um assistente que conversa, ajuda e configura o servidor por você.</div></div>
+    <div class="row"><div class="n">/06</div><div class="t">Live & Onboarding</div><div class="d">Avisa quando você fica ao vivo e recebe cada novo membro automaticamente.</div></div>
+  </div>
+</div></section>
+
+<section id="jogos"><div class="wrap">
+  <div class="lead"><div><div class="idx">02 — Jogos</div><h2>Bora jogar no chat</h2></div>
+  <div class="desc">Do clássico ao caos: jogos direto no Discord, sozinho ou com a tropa.</div></div>
+  <div class="games">
+    <div class="game"><div class="em">🎯</div><h3>Jogo da Velha</h3><p>O clássico 3x3 — desafie alguém.</p><code>/jogodavelha</code></div>
+    <div class="game"><div class="em">🔴</div><h3>Lig-4</h3><p>Alinhe 4 peças antes do rival.</p><code>/connect4</code></div>
+    <div class="game"><div class="em">🪢</div><h3>Forca</h3><p>Adivinhe a palavra letra a letra.</p><code>/forca</code></div>
+    <div class="game"><div class="em">🟩</div><h3>Wordle</h3><p>Descubra a palavra do dia.</p><code>/wordle</code></div>
+    <div class="game"><div class="em">🔤</div><h3>Anagrama</h3><p>Desembaralhe a palavra.</p><code>/anagrama</code></div>
+    <div class="game"><div class="em">🧠</div><h3>Quiz</h3><p>Perguntas de conhecimento.</p><code>/quiz</code></div>
+    <div class="game"><div class="em">🛑</div><h3>Stop</h3><p>Adedonha com a letra sorteada.</p><code>/stop</code></div>
+    <div class="game"><div class="em">🚢</div><h3>Batalha Naval</h3><p>Afunde a frota inimiga.</p><code>/batalhanaval</code></div>
+    <div class="game"><div class="em">🔎</div><h3>Caça-Palavras</h3><p>Ache as palavras escondidas.</p><code>/cacapalavras</code></div>
+    <div class="game"><div class="em">🧩</div><h3>Memória</h3><p>Encontre os pares.</p><code>/memoria</code></div>
+    <div class="game"><div class="em">🔥</div><h3>Verdade ou Desafio</h3><p>Escolha e encare.</p><code>/vab</code></div>
+    <div class="game"><div class="em">🍻</div><h3>Eu Nunca</h3><p>Confessa aí pra tropa.</p><code>/eununca</code></div>
+    <div class="game"><div class="em">🎰</div><h3>Cassino</h3><p>Aposte suas coins na sorte.</p><code>/slot · /roleta</code></div>
+  </div>
+</div></section>
+
+<section id="comandos"><div class="wrap">
+  <div class="lead"><div><div class="idx">03 — Comandos</div><h2>100+ comandos, um só bot</h2></div>
+  <div class="desc">Busque, filtre e veja tudo que o VISYA faz. Slash commands em português.</div></div>
+  <div class="cmdbar">
+    <input id="q" type="text" placeholder="Buscar comando... (ex: nivel, som, sorteio)" autocomplete="off">
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="cmdgrid" id="cmds"></div>
+</div></section>
+
+<section class="dark"><div class="wrap">
+  <div class="stats" id="stats">
+    <div class="s"><b data-n="100">0</b><span>comandos</span></div>
+    <div class="s"><b data-n="12">0</b><span>módulos</span></div>
+    <div class="s"><b data-n="423">0</b><span>sons</span></div>
+    <div class="s"><b data-n="24" data-suf="/7">0</b><span>sempre no ar</span></div>
+  </div>
+</div></section>
+
+<section id="painel" class="dark" style="border-top:1px solid #26262e"><div class="wrap">
+  <div class="lead"><div><div class="idx">04 — Painel</div><h2>Controle tudo pelo navegador</h2></div>
+  <div class="desc">Login com Discord, escolha o servidor e comande cada módulo. Sem digitar comando.</div></div>
+  <div class="mock">
+    <div class="bar"><span class="dt"></span><span class="dt"></span><span class="dt"></span> &nbsp; visya.app/painel</div>
+    <div class="body">
+      <div class="side">
+        <div class="srv"><svg width="20" height="20" style="color:#fff"><use href="#v"/></svg> N E X T</div>
+        <div class="it on">Visão geral</div><div class="it">Moderação</div><div class="it">Níveis</div><div class="it">Economia</div><div class="it">Boas-vindas</div>
+      </div>
+      <div class="main">
+        <div class="mh">Módulos</div>
+        <div class="tog"><span>🛡️ Moderação</span><span class="sw on"></span></div>
+        <div class="tog"><span>⭐ Níveis & XP</span><span class="sw on"></span></div>
+        <div class="tog"><span>🪙 Economia</span><span class="sw on"></span></div>
+        <div class="tog"><span>🔊 Soundboard</span><span class="sw"></span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="ia"><div class="wrap">
+  <div class="lead"><div><div class="idx">05 — IA no Discord</div><h2>Configure conversando</h2></div>
+  <div class="desc">Fale com a VISYA em português e ela executa. Ao entrar no servidor, ela cria um canal privado — só pros líderes — fixado no topo.</div></div>
+  <div class="demo" style="max-width:760px;margin:0 auto">
+    <div class="demo-top"><span class="hash">🔒</span> visya-líderes <span class="live" style="color:#8a8a95"><i style="background:#8a8a95;animation:none"></i> privado · líderes</span></div>
+    <div class="msgs">
+      <div class="msg"><div class="av" style="background:#f04747">J</div><div class="bd"><div class="nm">joão <span>líder · hoje</span></div><div class="tx">@VISYA cria um canal 📢 avisos e ativa o anti-link lá</div></div></div>
+      <div class="msg bot"><div class="av" style="background:#5865f2">V</div><div class="bd"><div class="nm">VISYA<span class="botbadge">BOT</span><span>hoje</span></div><div class="tx">✅ Feito! Criei <b>#📢・avisos</b> e liguei o <b>anti-link</b> nele. Quer que eu deixe só a staff postando?</div></div></div>
+      <div class="msg"><div class="av" style="background:#f04747">J</div><div class="bd"><div class="nm">joão <span>líder · hoje</span></div><div class="tx">isso, e manda as boas-vindas no #entrada</div></div></div>
+      <div class="msg bot"><div class="av" style="background:#5865f2">V</div><div class="bd"><div class="nm">VISYA<span class="botbadge">BOT</span><span>hoje</span></div><div class="tx">🎉 Pronto — boas-vindas ativadas no <b>#entrada</b> e avisos travados pra staff. Mais alguma coisa?</div></div></div>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--ink2);font-family:var(--disp);margin-top:18px;font-size:.98rem">🔒 Canal criado <b>automaticamente</b> ao adicionar o VISYA — fixado no topo, visível só pros líderes.</p>
+</div></section>
+
+<section id="faq"><div class="wrap" style="max-width:800px">
+  <div class="idx" style="text-align:center;margin-bottom:8px">06 — Dúvidas</div>
+  <h2 style="font-family:var(--disp);font-weight:800;font-size:clamp(2rem,5vw,3rem);text-align:center;margin:0 0 30px;letter-spacing:-.02em">Perguntas frequentes</h2>
+  <details open><summary>O VISYA é gratuito?</summary><p>Sim. Adicione ao seu servidor e use todos os módulos sem custo. Recursos premium virão como opção, nunca travando o essencial.</p></details>
+  <details><summary>Preciso saber programar pra configurar?</summary><p>Não. Use <code>/setup</code> no Discord ou o painel web: escolhe canais e cargos em cliques.</p></details>
+  <details><summary>Funciona em qualquer servidor?</summary><p>Sim — cada servidor tem sua própria configuração. O VISYA nasceu na NEXT Guild FF e hoje atende qualquer comunidade.</p></details>
+  <details><summary>O bot fica online 24 horas?</summary><p>Fica. Roda em servidor dedicado, com deploy automático e monitoramento.</p></details>
+</div></section>
+
+<section class="final"><div class="wrap">
+  <div class="idx" style="margin-bottom:18px">07 — Bora</div>
+  <h2>DÊ VIDA AO<br>SEU SERVIDOR</h2>
+  <a class="btn btn-p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord</a>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="brand"><svg style="width:22px;height:22px"><use href="#v"/></svg> VISYA</div>
+  <div class="fl"><a href="#recursos">Recursos</a><a href="#comandos">Comandos</a><a href="#painel">Painel</a><a href="https://discord.gg/qJYdgTnZh" target="_blank" rel="noopener">Servidor</a></div>
+  <div>visya.app — © 2026 · NEXT Guild FF</div>
+</div></footer>
+
+<script>
+(function(){
+  /* ---- chat demo ---- */
+  const chat=document.getElementById('chat');
+  const av={ 'joão':['#f04747','J'], 'ana':['#faa61a','A'], 'pedro':['#43b581','P'], 'VISYA':['#5865f2','V'] };
+  const SEQ=[
+    {u:'joão',t:'/nivel'},
+    {u:'VISYA',b:1,t:'⭐ <b>joão</b> está no <b>nível 42</b> · rank #3 · 88.240 XP'},
+    {u:'ana',t:'/som booyah'},
+    {u:'VISYA',b:1,t:'🔊 Tocando <b>Booyah</b> em 🔊 Squad 1'},
+    {u:'pedro',t:'/sorteio Nitro 1d'},
+    {u:'VISYA',b:1,t:'🎉 Sorteio de <b>Nitro</b> criado! Clique pra participar.'},
+    {u:'joão',t:'/daily'},
+    {u:'VISYA',b:1,t:'🪙 <b>+250 coins</b>! Volte amanhã pra mais.'},
+  ];
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let i=0;
+  function add(){
+    const m=SEQ[i%SEQ.length];
+    const [c,ini]=av[m.u]||['#5865f2','?'];
+    const el=document.createElement('div');
+    el.className='msg'+(m.b?' bot':'');
+    el.innerHTML=`<div class="av" style="background:${c}">${ini}</div><div class="bd"><div class="nm">${m.u}${m.b?'<span class="botbadge">BOT</span>':''}<span>hoje</span></div><div class="tx">${m.t}</div></div>`;
+    chat.appendChild(el);
+    while(chat.children.length>6) chat.removeChild(chat.firstChild);
+    i++;
+  }
+  add();add();add();
+  if(!reduce) setInterval(add, 1900);
+
+  /* ---- comandos: busca + filtro ---- */
+  const CMDS=[
+    ['/adv','Moderação','Adverte e registra um membro.'],['/listadv','Moderação','Lista advertências.'],['/rmadv','Moderação','Remove advertência.'],
+    ['/castigo','Moderação','Silencia por tempo (timeout).'],['/banimento','Moderação','Bane com motivo.'],['/limpar','Moderação','Apaga mensagens em massa.'],
+    ['/lock','Moderação','Tranca o canal.'],['/unlock','Moderação','Destranca o canal.'],['/lento','Moderação','Modo lento.'],
+    ['/antiflood','Moderação','Bloqueia flood.'],['/antilink','Moderação','Bloqueia links.'],['/antipalavra','Moderação','Filtro de palavrões.'],['/antitoxic','Moderação','Detecta toxicidade.'],
+    ['/marcar','Moderação','Marca membros em massa.'],['/promover','Moderação','Promove de cargo.'],['/rebaixar','Moderação','Rebaixa de cargo.'],
+    ['/nivel','Níveis','Seu cartão de nível (imagem).'],['/rank','Níveis','Ranking por XP.'],['/rep','Níveis','Dá reputação.'],
+    ['/saldo','Economia','Mostra suas coins.'],['/daily','Economia','Recompensa diária.'],['/pagar','Economia','Transfere coins.'],['/ricos','Economia','Ranking dos mais ricos.'],
+    ['/loja','Economia','Loja de cargos.'],['/darcoins','Economia','(ADM) Dá ou tira coins.'],['/apostar','Economia','Aposta no cassino.'],['/roleta','Economia','Roleta de apostas.'],['/slot','Economia','Caça-níquel.'],
+    ['/jogodavelha','Jogos','Jogo da velha.'],['/connect4','Jogos','Lig-4 (Connect 4).'],['/forca','Jogos','Jogo da forca.'],['/anagrama','Jogos','Desembaralhe a palavra.'],
+    ['/wordle','Jogos','Wordle em português.'],['/quiz','Jogos','Quiz de perguntas.'],['/stop','Jogos','Stop / Adedonha.'],['/batalhanaval','Jogos','Batalha naval.'],
+    ['/cacapalavras','Jogos','Caça-palavras.'],['/memoria','Jogos','Jogo da memória.'],['/vab','Jogos','Verdade ou desafio.'],['/eununca','Jogos','Eu nunca...'],
+    ['/ranking','Jogos','Ranking de vitórias.'],['/paineljogos','Jogos','Publica o hub de jogos.'],
+    ['/som','Diversão','Toca sons na call (400+).'],['/bola8','Diversão','Bola 8 mágica.'],['/casal','Diversão','Sorteia um casal.'],['/chance','Diversão','Chance de algo (%).'],
+    ['/charada','Diversão','Charadas.'],['/dado','Diversão','Rola um dado.'],['/escolher','Diversão','Escolhe entre opções.'],['/frase','Diversão','Frase aleatória.'],
+    ['/medidor','Diversão','Medidor de zoeira.'],['/moeda','Diversão','Cara ou coroa.'],['/ppt','Diversão','Pedra, papel, tesoura.'],['/quando','Diversão','Quando vai rolar?'],
+    ['/ship','Diversão','Combina dois membros.'],['/sorte','Diversão','Sua sorte do dia.'],['/sn','Diversão','Sim ou não.'],
+    ['/abraco','Interação','Abraça alguém.'],['/beijo','Interação','Beija alguém.'],['/cafune','Interação','Faz cafuné.'],['/soco','Interação','Dá um soco.'],
+    ['/tapa','Interação','Dá um tapa.'],['/mata','Interação','"Mata" alguém (zoeira).'],['/mordida','Interação','Morde alguém.'],
+    ['/guilda','Free Fire','Painel da guilda NEXT.'],['/honra','Free Fire','Honra/elogia um membro.'],['/treino','Free Fire','Marca treino da guilda.'],['/partida','Free Fire','Organiza uma partida.'],
+    ['/registrar','Free Fire','Registra seu ID de FF.'],['/agendarevento','Free Fire','Agenda evento.'],['/live','Free Fire','Anuncia sua live.'],['/destaques','Free Fire','Mural de clipes/destaques.'],
+    ['/mover','Voz','Move membro de call.'],['/puxar','Voz','Puxa alguém pra sua call.'],['/reunir','Voz','Reúne todos numa call.'],
+    ['/ia','IA','Fala com a IA do VISYA.'],['🌐 Traduzir','IA','Traduz mensagem (menu).'],
+    ['/setup','Utilidade','Configura o bot no servidor.'],['/painel','Utilidade','Publica painéis.'],['/painelverificar','Utilidade','Publica a verificação.'],
+    ['/autocargo','Utilidade','Cargos por botão/reação.'],['/autoresposta','Utilidade','Respostas automáticas.'],['/embed','Utilidade','Cria embed custom.'],['/legendas','Utilidade','Legendas prontas.'],
+    ['/parcerias','Utilidade','Gerencia parcerias.'],['/servidor','Utilidade','Infos do servidor.'],['/convites','Utilidade','Contador de convites.'],['/enquete','Utilidade','Enquete com botões.'],
+    ['/guia','Utilidade','Guia do servidor.'],['/lembrete','Utilidade','Agenda lembrete.'],['/sugestao','Utilidade','Envia sugestão.'],['/sorteio','Utilidade','Cria sorteio (giveaway).'],
+    ['/ping','Utilidade','Latência do bot.'],['/inativos','Utilidade','Lista inativos.'],['/membros','Utilidade','Contagem de membros.'],['/saidas','Utilidade','Quem saiu.'],
+    ['/perfil','Social','Perfil do membro.'],['/aniversario','Social','Registra aniversário.'],['📋 Ver ficha','Social','Ficha do membro (menu).'],
+  ];
+  const cats=['Todos',...[...new Set(CMDS.map(c=>c[1]))]];
+  const chips=document.getElementById('chips'), grid=document.getElementById('cmds'), q=document.getElementById('q');
+  let cat='Todos';
+  cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todos'?' on':'');b.textContent=c;b.onclick=()=>{cat=c;[...chips.children].forEach(x=>x.classList.toggle('on',x.textContent===c));render();};chips.appendChild(b);});
+  function render(){
+    const term=(q.value||'').toLowerCase();
+    const list=CMDS.filter(c=>(cat==='Todos'||c[1]===cat)&&(c[0].toLowerCase().includes(term)||c[2].toLowerCase().includes(term)));
+    grid.innerHTML=list.length?list.map(c=>`<div class="cmd"><div class="cat">${c[1]}</div><code>${c[0]}</code><p>${c[2]}</p></div>`).join(''):'<div class="empty">Nada encontrado 🤔</div>';
+  }
+  q.addEventListener('input',render); render();
+
+  /* ---- contadores ---- */
+  const stats=document.getElementById('stats');
+  function count(){
+    stats.querySelectorAll('b').forEach(b=>{
+      const n=+b.dataset.n, suf=b.dataset.suf||'', dur=1100, t0=performance.now();
+      (function step(now){const p=Math.min(1,(now-t0)/dur);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+ (p===1?suf: (suf&&p>.6?suf:''));if(p<1)requestAnimationFrame(step);})(t0);
+    });
+  }
+  if('IntersectionObserver'in window){const io=new IntersectionObserver((e)=>{if(e[0].isIntersecting){count();io.disconnect();}},{threshold:.4});io.observe(stats);}else count();
+})();
+</script>
