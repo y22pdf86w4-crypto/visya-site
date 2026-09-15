@@ -135,7 +135,11 @@ h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
   font-family:var(--serif);font-weight:900;
   font-size:clamp(4.2rem,15vw,11rem);line-height:.84;letter-spacing:-.045em;
   margin:0 0 6px;color:var(--ink);display:flex;align-items:baseline;gap:.08em;
+  /* A palavra muda de largura enquanto digita. Sem altura fixa, a capa
+     inteira pulava a cada troca. */
+  min-height:.9em;
 }
+.titulao #palavra{white-space:nowrap;}
 .titulao i{
   font-style:normal;width:.085em;height:.62em;background:var(--lim);
   display:inline-block;animation:cursor 1.15s steps(1) infinite;
@@ -326,7 +330,7 @@ footer{border-top:1px solid var(--line);padding-block:34px 44px;}
     <div class="capa-grade">
       <div>
         <div class="olho">community · creativity · beyond</div>
-        <h1 class="titulao">VISYA<i aria-hidden="true"></i></h1>
+        <h1 class="titulao"><span id="palavra">VISYA</span><i aria-hidden="true"></i></h1>
         <p class="lead">
           O bot completo da sua comunidade. Moderação, níveis, economia, tickets,
           jogos e música com nó de áudio próprio — de guilda de jogo a time de vendas,
@@ -591,6 +595,37 @@ const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* Uma paleta quente/fria sem azul cromático: o que dá cor à página são os
    itens, um de cada vez — nunca o fundo. */
 const CORES = ['#c8ff2e','#ff8a3d','#ff5a5f','#3ddad7','#b39dff','#ffd166','#7bd389','#f78ca0'];
+
+/* ------------------------------------------------------ titulo que digita
+   O titulo escreve, apaga e troca de palavra. O cursor limao ja estava la
+   parado; agora ele tem o que fazer. Quem pediu menos movimento fica so com
+   "VISYA", sem animacao nenhuma. */
+const PALAVRAS_TITULO = ['VISYA', 'BOT', 'MODERA', 'TOCA', 'ORGANIZA', 'RESPONDE'];
+(function digitar(){
+  const alvo = $('#palavra');
+  if (!alvo) return;
+  if (calmo) { alvo.textContent = PALAVRAS_TITULO[0]; return; }
+
+  let iP = 0, iL = 0, apagando = false;
+  const passo = () => {
+    const palavra = PALAVRAS_TITULO[iP];
+    iL += apagando ? -1 : 1;
+    alvo.textContent = palavra.slice(0, iL);
+
+    if (!apagando && iL === palavra.length) {       // escreveu: respira
+      apagando = true;
+      return setTimeout(passo, iP === 0 ? 2400 : 1500);
+    }
+    if (apagando && iL === 0) {                     // apagou: proxima
+      apagando = false;
+      iP = (iP + 1) % PALAVRAS_TITULO.length;
+      return setTimeout(passo, 320);
+    }
+    // Apagar e sempre mais rapido que escrever — e o que soa natural.
+    setTimeout(passo, apagando ? 55 : 115);
+  };
+  setTimeout(passo, 1200);
+})();
 
 /* --------------------------------------------------------------- faixa */
 const PALAVRAS = ['moderação','níveis','economia','soundboard','ia','sorteios','jogos','tickets','música','modelos','backup','pix'];

@@ -9,7 +9,11 @@
   font-family:var(--serif);font-weight:900;
   font-size:clamp(4.2rem,15vw,11rem);line-height:.84;letter-spacing:-.045em;
   margin:0 0 6px;color:var(--ink);display:flex;align-items:baseline;gap:.08em;
+  /* A palavra muda de largura enquanto digita. Sem altura fixa, a capa
+     inteira pulava a cada troca. */
+  min-height:.9em;
 }
+.titulao #palavra{white-space:nowrap;}
 .titulao i{
   font-style:normal;width:.085em;height:.62em;background:var(--lim);
   display:inline-block;animation:cursor 1.15s steps(1) infinite;
