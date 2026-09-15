@@ -24,7 +24,7 @@ const RECURSOS = [
   ['IA integrada',      'Conversa, toca música e configura o servidor — cada coisa com a sua permissão.'],
   ['Onboarding & live', 'Recebe cada novo membro e avisa a galera quando você fica ao vivo.'],
 ];
-$('#recursos').innerHTML = RECURSOS.map(([t, d], i) =>
+$('#grade-recursos').innerHTML = RECURSOS.map(([t, d], i) =>
   '<article class="rec" style="--c:' + CORES[i % CORES.length] + '">'
   + '<div class="num"><span>/' + String(i + 1).padStart(2, '0') + '</span><em>////</em></div>'
   + '<h3>' + esc(t) + '</h3><p>' + esc(d) + '</p></article>').join('');

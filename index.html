@@ -363,7 +363,7 @@ footer{border-top:1px solid var(--line);padding-block:34px 44px;}
     <div class="olho">01 — recursos</div>
     <h2>Uma criatura<br>de mil funções</h2>
     <p class="sub">Cada módulo roda sozinho, 24 horas por dia. Você liga o que quiser, servidor por servidor — e desliga o que não usa.</p>
-    <div class="recursos" id="recursos"></div>
+    <div class="recursos" id="grade-recursos"></div>
   </div>
 </section>
 
@@ -604,7 +604,7 @@ const RECURSOS = [
   ['IA integrada',      'Conversa, toca música e configura o servidor — cada coisa com a sua permissão.'],
   ['Onboarding & live', 'Recebe cada novo membro e avisa a galera quando você fica ao vivo.'],
 ];
-$('#recursos').innerHTML = RECURSOS.map(([t, d], i) =>
+$('#grade-recursos').innerHTML = RECURSOS.map(([t, d], i) =>
   '<article class="rec" style="--c:' + CORES[i % CORES.length] + '">'
   + '<div class="num"><span>/' + String(i + 1).padStart(2, '0') + '</span><em>////</em></div>'
   + '<h3>' + esc(t) + '</h3><p>' + esc(d) + '</p></article>').join('');
