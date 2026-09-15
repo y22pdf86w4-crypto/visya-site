@@ -28,21 +28,31 @@
 
   /* Manchas de luz ao fundo — é o que dá o ar de grafite neon sem empilhar
      imagem sobre imagem. Puramente decorativas. */
-  .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-  .aurora i{position:absolute;display:block;border-radius:50%;filter:blur(90px);}
-  .aurora i:nth-child(1){width:52vw;height:52vw;left:-14vw;top:-16vw;background:radial-gradient(circle,#4a72ff,transparent 68%);opacity:.5;}
-  .aurora i:nth-child(2){width:46vw;height:46vw;right:-12vw;top:22vh;background:radial-gradient(circle,#ff3ea5,transparent 68%);opacity:.34;}
-  .aurora i:nth-child(3){width:58vw;height:58vw;left:18vw;bottom:-28vw;background:radial-gradient(circle,#a855f7,transparent 70%);opacity:.3;}
+  /* Auroras do fundo. Ja foram tres elementos position:fixed de ~55vw com
+     filter:blur(90px) — o navegador recompunha essas camadas gigantes a cada
+     quadro de rolagem e o celular estourava a memoria de GPU (tela branca e
+     recarga). Como radial-gradient ja nasce suave, o blur nao acrescentava
+     nada visualmente: agora sao gradientes pintados direto no body, sem
+     camada extra e sem filtro. */
+  body{background-color:var(--void);
+    background-image:
+      radial-gradient(52vw 52vw at 6% -10%, rgba(74,114,255,.42), transparent 68%),
+      radial-gradient(46vw 46vw at 98% 16%, rgba(255,62,165,.26), transparent 68%),
+      radial-gradient(58vw 58vw at 46% 104%, rgba(168,85,247,.24), transparent 70%);
+    background-attachment:scroll;background-repeat:no-repeat;}
 
   .btn{font-family:var(--mono);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;padding:15px 24px;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:transform .14s,box-shadow .2s,background .2s,color .2s;display:inline-flex;gap:9px;align-items:center;}
   .btn-p{background:linear-gradient(100deg,var(--sig),var(--vio) 58%,var(--mag));color:#fff;box-shadow:var(--glow);}
   .btn-p:hover{transform:translateY(-2px);box-shadow:0 0 58px rgba(255,62,165,.5);}
-  .btn-o{background:rgba(255,255,255,.04);color:var(--ink);border-color:var(--line);backdrop-filter:blur(6px);}
+  .btn-o{background:rgba(255,255,255,.06);color:var(--ink);border-color:var(--line);}
   .btn-o:hover{border-color:var(--cy);color:#fff;transform:translateY(-2px);}
   .btn:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--cy);outline-offset:3px;}
 
   /* NAV */
-  nav{position:fixed;top:0;left:0;right:0;z-index:40;backdrop-filter:blur(16px);background:rgba(6,5,26,.72);border-bottom:1px solid var(--line);}
+  /* Sem backdrop-filter: ele obriga o navegador a reamostrar tudo que passa
+     por tras da barra a cada quadro de rolagem. Num fundo escuro, deixar a
+     barra quase opaca da o mesmo resultado de graca. */
+  nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(6,5,26,.94);border-bottom:1px solid var(--line);}
   nav .wrap{display:flex;align-items:center;height:66px;gap:20px;}
   .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:1.25rem;letter-spacing:.02em;}
   .brand svg{width:26px;height:26px;color:#fff;filter:drop-shadow(0 0 10px rgba(74,114,255,.9));}
@@ -57,12 +67,12 @@
   .kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cy);margin-bottom:14px;}
   h1{font-family:var(--disp);font-weight:800;font-size:clamp(3.4rem,10vw,8rem);line-height:.86;letter-spacing:-.03em;margin:0;
      background:linear-gradient(96deg,#fff 18%,#b9c6ff 46%,#ff8fd0 82%);-webkit-background-clip:text;background-clip:text;color:transparent;
-     filter:drop-shadow(0 0 34px rgba(74,114,255,.42));}
+  }
   .hero p{font-family:var(--disp);font-weight:400;font-size:clamp(1.05rem,2.2vw,1.45rem);max-width:520px;margin:18px 0 0;color:var(--ink2);line-height:1.4;}
   .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
 
   /* CHAT DEMO */
-  .demo{background:rgba(15,13,43,.86);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 60px rgba(74,114,255,.14);backdrop-filter:blur(8px);}
+  .demo{background:rgba(15,13,43,.86);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 60px rgba(74,114,255,.14);}
   .demo-top{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--ink2);font-size:.82rem;}
   .demo-top .hash{color:var(--ink3);font-weight:700;}
   .demo-top .live{margin-left:auto;display:flex;align-items:center;gap:6px;color:#3ce6a4;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;}
@@ -183,8 +193,6 @@
 </style>
 
 <svg width="0" height="0" style="position:absolute"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
-
-<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <nav><div class="wrap">
   <div class="brand"><svg><use href="#v"/></svg> VISYA</div>
