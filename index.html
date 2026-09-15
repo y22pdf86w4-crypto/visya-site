@@ -185,8 +185,10 @@ h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
 .faixa:hover .faixa-in{animation-play-state:paused;}
 
 /* -------------------------------------------------------- cards de recurso */
-.recursos{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;
+.recursos{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
   background:var(--line);border:1px solid var(--line);margin-top:42px;}
+@media(max-width:920px){.recursos{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:580px){.recursos{grid-template-columns:1fr;}}
 .rec{background:var(--void);padding:28px 24px 26px;position:relative;transition:background .2s;}
 .rec:hover{background:var(--void2);}
 .rec::before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;
@@ -238,14 +240,14 @@ h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
 .conta{font-family:var(--mono);font-size:.68rem;color:var(--ink3);margin-top:14px;}
 .cmds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);margin-top:18px;}
-.cmd{background:var(--void);padding:14px 15px;transition:background .15s;}
-.cmd:hover{background:var(--void2);}
-.cmd .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
-.cmd code{font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--lim);}
-.cmd .cat{font-family:var(--mono);font-size:.55rem;letter-spacing:.11em;text-transform:uppercase;
+.cmds>.cmd{background:var(--void);padding:14px 15px;transition:background .15s;}
+.cmds>.cmd:hover{background:var(--void2);}
+.cmds .cmd .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.cmds .cmd code{font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--lim);}
+.cmds .cmd .cat{font-family:var(--mono);font-size:.55rem;letter-spacing:.11em;text-transform:uppercase;
   color:var(--ink3);border:1px solid var(--line2);border-radius:99px;padding:1px 7px;}
-.cmd p{margin:6px 0 0;font-size:.82rem;color:var(--ink2);}
-.cmd .subs{font-family:var(--mono);font-size:.62rem;color:var(--ink3);margin-top:6px;word-break:break-word;}
+.cmds .cmd p{margin:6px 0 0;font-size:.82rem;color:var(--ink2);}
+.cmds .cmd .subs{font-family:var(--mono);font-size:.62rem;color:var(--ink3);margin-top:6px;word-break:break-word;}
 .vazio{grid-column:1/-1;background:var(--void);padding:40px;text-align:center;color:var(--ink3);font-family:var(--mono);font-size:.8rem;}
 
 /* ---------------------------------------------------------- dois blocos */
