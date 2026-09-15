@@ -1,0 +1,7 @@
+# As partes que o montar.py cola em index.html. Sao a FONTE, nao a pagina:
+# sem isto ficariam servidas em /index.head.html e companhia.
+index.head.html
+index.css2.html
+index.body.html
+index.js.html
+montar.py

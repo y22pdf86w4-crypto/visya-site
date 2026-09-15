@@ -1,0 +1,283 @@
+<body>
+
+<!-- símbolo da marca, reusado no topo e no rodapé -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
+
+<!-- Barra de topo em forma de prompt: a navegação é o caminho digitado. -->
+<div class="prompt">
+  <div class="prompt-in">
+    <span class="cifrao">$</span>
+    <a class="marca" href="#topo" aria-label="VISYA — início"><svg aria-hidden="true"><use href="#v"/></svg>VISYA</a>
+    <nav class="caminho" aria-label="Seções">
+      <a href="#recursos">/recursos</a>
+      <a href="#modelos">/modelos</a>
+      <a href="#jogos">/jogos</a>
+      <a href="#comandos">/comandos</a>
+      <a href="#painel">/painel</a>
+      <a href="#faq">/faq</a>
+    </nav>
+    <button class="atalho" id="atalho" type="button">buscar comando · Ctrl K</button>
+  </div>
+</div>
+
+<main id="topo">
+
+<!-- ============================================================ CAPA -->
+<section class="capa">
+  <div class="env cantos" data-canto="2026 &lt;/" data-canto2="/&gt; discord bot">
+    <div class="capa-grade">
+      <div>
+        <div class="olho">community · creativity · beyond</div>
+        <h1 class="titulao">VISYA<i aria-hidden="true"></i></h1>
+        <p class="lead">
+          O bot completo da sua comunidade. Moderação, níveis, economia, tickets,
+          jogos e música com nó de áudio próprio — de guilda de jogo a time de vendas,
+          sem trocar de bot no caminho.
+        </p>
+        <div class="cta">
+          <a class="btn p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord →</a>
+          <a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Abrir o painel</a>
+        </div>
+        <div class="selos">
+          <div class="selo"><b>103</b><span>comandos</span></div>
+          <div class="selo"><b>104</b><span>modelos de servidor</span></div>
+          <div class="selo"><b>13</b><span>jogos no chat</span></div>
+          <div class="selo"><b>24/7</b><span>no ar</span></div>
+        </div>
+      </div>
+
+      <div class="janela">
+        <div class="janela-topo">
+          <div class="bolas"><i></i><i></i><i></i></div>
+          <span>#geral</span>
+          <span class="aovivo"><i></i>ao vivo</span>
+        </div>
+        <div class="msgs" id="chat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== FAIXA -->
+<div class="faixa" aria-hidden="true"><div class="faixa-in" id="faixa"></div></div>
+
+<!-- ======================================================= RECURSOS -->
+<section class="secao" id="recursos">
+  <div class="env cantos" data-canto="001 ▷" data-canto2="//// módulos">
+    <div class="olho">01 — recursos</div>
+    <h2>Uma criatura<br>de mil funções</h2>
+    <p class="sub">Cada módulo roda sozinho, 24 horas por dia. Você liga o que quiser, servidor por servidor — e desliga o que não usa.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+</section>
+
+<!-- ======================================================== MODELOS -->
+<section class="secao risco" id="modelos">
+  <div class="env cantos" data-canto="002 ▷" data-canto2="//// estruturas">
+    <div class="olho">02 — modelos de servidor</div>
+    <div class="duo">
+      <div>
+        <h2>Servidor pronto<br>em um clique</h2>
+        <p class="sub">
+          104 estruturas completas de canais e cargos, uma por assunto. Escolhe,
+          vê a prévia inteira e aplica — os canais já saem ligados ao recurso que
+          demonstram.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[30]</span><span><b>Jogos</b> — Fortnite, GTA RP, Valorant, CS2, LoL, Minecraft, Free Fire, WoW e mais</span></li>
+          <li><span class="mark">[20]</span><span><b>Negócios</b> — empresarial, vendas, e-commerce, agência, startup, imobiliária, advocacia</span></li>
+          <li><span class="mark">[10]</span><span><b>Educação</b> — vestibular, concursos, idiomas, programação, faculdade</span></li>
+          <li><span class="mark">[10]</span><span><b>Criadores</b> — streamer, canal, podcast, música, fotografia, escrita</span></li>
+          <li><span class="mark">[34]</span><span><b>Cultura e convivência</b> — anime, K-pop, RPG, futebol, pets, fé, bem-estar</span></li>
+        </ul>
+        <div class="cta" style="margin-top:28px"><a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Ver a galeria →</a></div>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>modelo · gta-rp</span></div>
+        <div class="term">
+          <b>【 PORTARIA 】</b>
+          <div class="dentro">#『👋』chegada <span class="liga">liga boasVindas</span></div>
+          <div class="dentro">#『📜』regras-da-cidade</div>
+          <div class="dentro">#『🪪』whitelist <span class="liga">liga candidaturas</span></div>
+          <b style="margin-top:9px">【 SERVIÇOS 】</b>
+          <div class="dentro">#『🚓』policia</div>
+          <div class="dentro">#『🚑』paramedicos</div>
+          <div class="dentro">#『🔧』mecanica</div>
+          <b style="margin-top:9px">【 OCORRÊNCIAS 】</b>
+          <div class="dentro">#『🚨』denuncias <span class="liga">liga denuncias</span></div>
+          <div style="margin-top:11px;color:var(--ink3);font-size:.66rem">6 categorias · 25 canais · 12 cargos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== JOGOS -->
+<section class="secao risco" id="jogos">
+  <div class="env cantos" data-canto="003 ▷" data-canto2="//// no chat">
+    <div class="olho">03 — jogos</div>
+    <h2>Bora jogar no chat</h2>
+    <p class="sub">Do clássico ao caos, direto no Discord — sozinho ou com a tropa. Cada um na sua sala, com ranking próprio.</p>
+  </div>
+  <div class="env"><div class="trilho" id="trilho"></div></div>
+</section>
+
+<!-- ======================================================= COMANDOS -->
+<section class="secao risco" id="comandos">
+  <div class="env cantos" data-canto="004 ▷" data-canto2="//// slash">
+    <div class="olho">04 — comandos</div>
+    <h2>103 comandos,<br>um só bot</h2>
+    <p class="sub">Tudo em português, com subcomandos organizados. Busque pelo nome ou pelo que ele faz.</p>
+    <div class="busca">
+      <span class="cifrao">$</span>
+      <input id="q" type="search" placeholder="buscar… ex.: castigo, sorteio, musica, nivel" autocomplete="off" spellcheck="false" aria-label="Buscar comando">
+    </div>
+    <div class="fichas" id="fichas"></div>
+    <div class="conta" id="conta"></div>
+    <div class="cmds" id="cmds"></div>
+  </div>
+</section>
+
+<!-- ========================================================= NÚMEROS -->
+<section class="secao risco">
+  <div class="env">
+    <div class="numeros">
+      <div class="numero"><b>103</b><span>comandos</span></div>
+      <div class="numero"><b>104</b><span>modelos</span></div>
+      <div class="numero"><b>400+</b><span>sons na call</span></div>
+      <div class="numero"><b>13</b><span>jogos</span></div>
+      <div class="numero"><b>19</b><span>abas no painel</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== PAINEL -->
+<section class="secao risco" id="painel">
+  <div class="env cantos" data-canto="005 ▷" data-canto2="//// navegador">
+    <div class="olho">05 — painel</div>
+    <div class="duo">
+      <div>
+        <h2>Configure sem<br>digitar comando</h2>
+        <p class="sub">
+          Entra com o Discord e ajusta cada servidor onde você é admin. Canal por
+          canal, cargo por cargo, módulo por módulo — e o que você muda vale na hora.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[01]</span><span><b>Um lugar por assunto</b> — 19 abas, da moderação à loja</span></li>
+          <li><span class="mark">[02]</span><span><b>Copiloto</b> — descreve o que quer e a IA configura</span></li>
+          <li><span class="mark">[03]</span><span><b>Backup do servidor</b> — pra reconstruir depois de um desastre</span></li>
+          <li><span class="mark">[04]</span><span><b>Pagamentos por PIX</b> — sua conta Mercado Pago, seu dinheiro</span></li>
+          <li><span class="mark">[05]</span><span><b>Auditoria</b> — quem mexeu no quê, e quando</span></li>
+        </ul>
+        <div class="cta" style="margin-top:28px"><a class="btn p" href="https://painel.visya.app.br" target="_blank" rel="noopener">Entrar no painel →</a></div>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>painel.visya.app.br</span></div>
+        <div class="term" style="line-height:2">
+          <div style="color:var(--ink3);font-size:.62rem;letter-spacing:.14em">CONFIGURAÇÃO</div>
+          <div>◆ Geral</div>
+          <div style="color:var(--ink);background:rgba(200,255,46,.1);border-left:2px solid var(--lim);padding-left:8px;margin-left:-10px">🧩 Modelos de servidor</div>
+          <div>👋 Boas-vindas &amp; Saída</div>
+          <div>⭐ Níveis &amp; XP</div>
+          <div>🛡️ Moderação</div>
+          <div>🎵 Música &amp; Soundboard</div>
+          <div>🎫 Chamados &amp; Verificação</div>
+          <div style="color:var(--ink3);font-size:.62rem;letter-spacing:.14em;margin-top:10px">FERRAMENTAS</div>
+          <div>✦ Copiloto</div>
+          <div>💳 Pagamentos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== IA -->
+<section class="secao risco" id="ia">
+  <div class="env cantos" data-canto="006 ▷" data-canto2="//// cérebro">
+    <div class="olho">06 — inteligência</div>
+    <div class="duo">
+      <div>
+        <h2>Fala com ele<br>como fala com gente</h2>
+        <p class="sub">
+          O VISYA entende o pedido e executa. Membro pede música e ele toca;
+          admin pede configuração e ele configura. O que é ação de liderança
+          continua só pra liderança.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[♪]</span><span><b>Toca música</b> por nome, link ou playlist — pra qualquer membro</span></li>
+          <li><span class="mark">[⚙]</span><span><b>Configura o servidor</b> conversando — só pra admin</span></li>
+          <li><span class="mark">[🌐]</span><span><b>Traduz e resume</b> conversa pelo menu de contexto</span></li>
+          <li><span class="mark">[🛡]</span><span><b>Nada destrutivo</b> — não existe ferramenta de apagar ou banir, de propósito</span></li>
+        </ul>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>#ia</span><span class="aovivo"><i></i>pensando</span></div>
+        <div class="msgs" id="iachat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= FAQ -->
+<section class="secao risco" id="faq">
+  <div class="env cantos" data-canto="007 ▷" data-canto2="//// dúvidas">
+    <div class="olho">07 — perguntas</div>
+    <h2>O que costumam<br>perguntar</h2>
+    <div class="faq">
+      <details>
+        <summary><span class="q">[01]</span>O VISYA é de graça?</summary>
+        <p>É. Todos os módulos funcionam sem pagar nada. O painel tem integração com Mercado Pago pra <em>você</em> vender cargos e produtos no seu servidor — esse dinheiro vai pra sua conta, não pra nossa.</p>
+      </details>
+      <details>
+        <summary><span class="q">[02]</span>Serve pro meu servidor, que não é de jogo?</summary>
+        <p>Serve. Nada no bot é amarrado a um nicho: o módulo de Free Fire é opcional, e dos 104 modelos de servidor, 20 são de negócios e 10 de educação. O que decide é o que você liga.</p>
+      </details>
+      <details>
+        <summary><span class="q">[03]</span>A música toca do YouTube?</summary>
+        <p>Link do YouTube e do Spotify funcionam pra <b>ler a lista</b> — faixas, ordem, até 100 itens. O áudio vem do SoundCloud, escolhido pelo catálogo do Deezer com trava de duração, que é o que impede tocar versão acelerada ou cover no lugar da original. O YouTube não libera áudio pra IP de datacenter, e contornar isso não é caminho que a gente siga.</p>
+      </details>
+      <details>
+        <summary><span class="q">[04]</span>Preciso saber programar?</summary>
+        <p>Não. O painel cobre tudo pelo navegador, e o copiloto configura conversando. No Discord, <code>/setup</code> resolve o essencial.</p>
+      </details>
+      <details>
+        <summary><span class="q">[05]</span>Aplicar um modelo apaga meus canais?</summary>
+        <p>Não apaga nada. O modelo <b>cria</b> o que falta e <b>renomeia</b> o que já existe com nome parecido. A prévia no painel mostra exatamente o que vai aparecer, antes de você confirmar.</p>
+      </details>
+      <details>
+        <summary><span class="q">[06]</span>E os dados do meu servidor?</summary>
+        <p>Cada servidor tem a própria configuração, isolada das outras. O bot só lê o que precisa pra funcionar, e nenhuma ação destrutiva existe na IA — por decisão de projeto, não por descuido.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= FIM -->
+<section class="fim">
+  <div class="env">
+    <div class="olho">pronto quando você estiver</div>
+    <h2>Chama o VISYA<br>pro seu servidor</h2>
+    <div class="cta">
+      <a class="btn p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord →</a>
+      <a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Abrir o painel</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="env pe">
+    <div style="display:flex;align-items:center;gap:9px">
+      <svg width="16" height="16" aria-hidden="true"><use href="#v"/></svg>
+      VISYA · 2026
+    </div>
+    <nav>
+      <a href="#recursos">Recursos</a>
+      <a href="#modelos">Modelos</a>
+      <a href="#comandos">Comandos</a>
+      <a href="https://painel.visya.app.br" target="_blank" rel="noopener">Painel ↗</a>
+    </nav>
+    <div>feito no Brasil · pt-BR</div>
+  </div>
+</footer>

@@ -1,0 +1,162 @@
+<script>
+(() => {
+'use strict';
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Uma paleta quente/fria sem azul cromático: o que dá cor à página são os
+   itens, um de cada vez — nunca o fundo. */
+const CORES = ['#c8ff2e','#ff8a3d','#ff5a5f','#3ddad7','#b39dff','#ffd166','#7bd389','#f78ca0'];
+
+/* --------------------------------------------------------------- faixa */
+const PALAVRAS = ['moderação','níveis','economia','soundboard','ia','sorteios','jogos','tickets','música','modelos','backup','pix'];
+$('#faixa').innerHTML = [...PALAVRAS, ...PALAVRAS]
+  .map(p => '<span>' + esc(p) + ' <i>&#10038;</i></span>').join('');
+
+/* ------------------------------------------------------------ recursos */
+const RECURSOS = [
+  ['Moderação',         'Advertências, castigo, anti-raid, anti-flood e AutoMod nativo. A ordem sem esforço.'],
+  ['Níveis & XP',       'Ranking por mensagem e por voz, com cartão de nível gerado em imagem.'],
+  ['Economia & Loja',   'Coins, daily, cassino, loja de cargos e transferência entre membros.'],
+  ['Soundboard',        '400+ sons do Brasil na call, com busca por nome e painel de botões.'],
+  ['IA integrada',      'Conversa, toca música e configura o servidor — cada coisa com a sua permissão.'],
+  ['Onboarding & live', 'Recebe cada novo membro e avisa a galera quando você fica ao vivo.'],
+];
+$('#recursos').innerHTML = RECURSOS.map(([t, d], i) =>
+  '<article class="rec" style="--c:' + CORES[i % CORES.length] + '">'
+  + '<div class="num"><span>/' + String(i + 1).padStart(2, '0') + '</span><em>////</em></div>'
+  + '<h3>' + esc(t) + '</h3><p>' + esc(d) + '</p></article>').join('');
+
+/* --------------------------------------------------------------- jogos */
+const JOGOS = [
+  ['VELHA', 'O clássico 3x3 — desafie alguém.', '/jogodavelha'],
+  ['LIG-4', 'Alinhe 4 peças antes do rival.', '/connect4'],
+  ['FORCA', 'Adivinhe a palavra letra a letra.', '/forca'],
+  ['WORDLE', 'Descubra a palavra do dia.', '/wordle'],
+  ['ANAGRAMA', 'Desembaralhe a palavra.', '/anagrama'],
+  ['QUIZ', 'Perguntas de conhecimento geral.', '/quiz'],
+  ['STOP', 'Adedonha com a letra sorteada.', '/stop'],
+  ['NAVAL', 'Afunde a frota inimiga.', '/batalhanaval'],
+  ['CAÇA', 'Ache as palavras escondidas.', '/cacapalavras'],
+  ['MEMÓRIA', 'Encontre os pares.', '/memoria'],
+  ['VERDADE', 'Verdade ou desafio — escolha e encare.', '/vab'],
+  ['EU NUNCA', 'Confessa aí pra tropa.', '/eununca'],
+  ['CASSINO', 'Aposte suas coins na sorte.', '/cassino'],
+];
+$('#trilho').innerHTML = JOGOS.map(([p, d, c], i) =>
+  '<article class="jogo" style="--c:' + CORES[i % CORES.length] + '">'
+  + '<div class="topo"><span>' + String(i + 1).padStart(3, '0') + '</span><span>////</span></div>'
+  + '<div class="palavra">' + esc(p) + '</div>'
+  + '<div class="ds">' + esc(d) + '</div>'
+  + '<div class="cmd">' + esc(c) + '</div></article>').join('');
+
+/* ------------------------------------------------------------ comandos
+   A lista vem do REGISTRO do bot, não escrita à mão: a versão anterior
+   ainda anunciava /abraco, /roleta e /paineljogos, que sumiram quando os
+   comandos foram agrupados pra caber no teto de 100 do Discord. */
+const CMDS = window.__CMDS__;
+const CATS = ['Todos', ...new Set(CMDS.map(c => c[1]))];
+let cat = 'Todos';
+const sem = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+$('#fichas').innerHTML = CATS.map(c =>
+  '<button class="ficha' + (c === 'Todos' ? ' on' : '') + '" type="button" data-cat="'
+  + esc(c) + '">' + esc(c) + '</button>').join('');
+
+function pinta() {
+  const q = sem($('#q').value.trim());
+  const lista = CMDS.filter(([n, c, d]) =>
+    (cat === 'Todos' || c === cat)
+    && (!q || sem(n).includes(q) || sem(d).includes(q) || sem(c).includes(q)));
+
+  $('#conta').textContent = lista.length === CMDS.length
+    ? CMDS.length + ' comandos'
+    : lista.length + ' de ' + CMDS.length;
+
+  $('#cmds').innerHTML = lista.length
+    ? lista.map(([n, c, d, subs]) =>
+        '<article class="cmd"><div class="top"><code>' + esc(n) + '</code>'
+        + '<span class="cat">' + esc(c) + '</span></div><p>' + esc(d) + '</p>'
+        + (subs && subs.length > 1 ? '<div class="subs">' + subs.map(esc).join(' &middot; ') + '</div>' : '')
+        + '</article>').join('')
+    : '<div class="vazio">nenhum comando com &quot;' + esc($('#q').value) + '&quot;</div>';
+}
+$('#q').addEventListener('input', pinta);
+$$('#fichas .ficha').forEach(b => b.addEventListener('click', () => {
+  cat = b.dataset.cat;
+  $$('#fichas .ficha').forEach(x => x.classList.toggle('on', x === b));
+  pinta();
+}));
+pinta();
+
+/* Ctrl+K leva pra busca — o atalho que a barra de topo anuncia. */
+function focarBusca(e) {
+  if (e) e.preventDefault();
+  $('#comandos').scrollIntoView({ behavior: calmo ? 'auto' : 'smooth', block: 'start' });
+  setTimeout(() => $('#q').focus(), calmo ? 0 : 420);
+}
+$('#atalho').addEventListener('click', focarBusca);
+addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') focarBusca(e);
+  if (e.key === 'Escape' && document.activeElement === $('#q')) $('#q').blur();
+});
+
+/* -------------------------------------------- conversas que se escrevem */
+const AV = { 'joão': ['#ff8a3d', 'J'], 'ana': ['#3ddad7', 'A'], 'pedro': ['#7bd389', 'P'], 'VISYA': ['#c8ff2e', 'V'] };
+const COD = t => '<code style="font-family:var(--mono);color:var(--lim)">' + t + '</code>';
+
+function linha(quem, texto, bot) {
+  const par = AV[quem] || ['#6c6c70', quem[0].toUpperCase()];
+  const el = document.createElement('div');
+  el.className = 'msg';
+  el.innerHTML = '<span class="av" style="background:' + par[0] + '">' + esc(par[1]) + '</span>'
+    + '<div><div class="nome">' + esc(quem)
+    + (bot ? '<span class="tag">APP</span>' : '')
+    + '<span class="quando">hoje</span></div>'
+    + '<div class="txt">' + texto + '</div></div>';
+  return el;
+}
+
+function roteiro(alvo, falas, laco) {
+  const caixa = $(alvo);
+  if (!caixa) return;
+  // Sem animação pra quem pediu menos movimento: o conteúdo aparece inteiro.
+  if (calmo) { falas.forEach(f => caixa.appendChild(linha(f[0], f[1], f[2]))); return; }
+  let i = 0;
+  const passo = () => {
+    if (i >= falas.length) {
+      if (!laco) return;
+      setTimeout(() => { caixa.innerHTML = ''; i = 0; passo(); }, 4200);
+      return;
+    }
+    const f = falas[i++];
+    caixa.appendChild(linha(f[0], f[1], f[2]));
+    caixa.scrollTop = caixa.scrollHeight;
+    setTimeout(passo, f[2] ? 1500 : 1000);
+  };
+  passo();
+}
+
+roteiro('#chat', [
+  ['joão', COD('/nivel')],
+  ['VISYA', '&#11088; <b>joão</b> está no nível <b>42</b> &middot; rank #3 &middot; 88.240 XP', true],
+  ['ana', COD('/musica tocar') + ' bohemian rhapsody'],
+  ['VISYA', '&#127925; Tocando agora em &#128266; Squad 1 — <b>Bohemian Rhapsody</b>', true],
+  ['pedro', COD('/sorteio criar') + ' Nitro &middot; 1 dia'],
+  ['VISYA', '&#127881; Sorteio de <b>Nitro</b> criado. Clica pra participar!', true],
+], true);
+
+roteiro('#iachat', [
+  ['joão', 'coloca uma música aí pra gente'],
+  ['VISYA', '&#127925; Tocando <b>Evidências</b> em &#128266; Sala 1. Boa escolha!', true],
+  ['ana', 'cria um canal de avisos e tranca pra staff'],
+  ['VISYA', 'Só a liderança mexe na estrutura — chama um admin que eu faço na hora.', true],
+  ['pedro', 'sou admin. cria o canal de avisos'],
+  ['VISYA', '&#9989; Criei <b>&#128227;・avisos</b> e deixei só a staff escrevendo.', true],
+], true);
+})();
+</script>
+</body>
+</html>

@@ -1,460 +1,742 @@
-<title>VISYA</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" sizes="256x256" href="assets/brand/favicon.png">
-<link rel="apple-touch-icon" href="assets/brand/favicon.png">
-<meta name="theme-color" content="#5865f2">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VISYA — o bot completo da sua comunidade no Discord</title>
+<meta name="description" content="Moderação, níveis, economia, tickets, jogos e música com nó de áudio próprio. 103 comandos em português, 104 modelos de servidor prontos e um painel web pra configurar sem digitar comando.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/brand/favicon.png">
+<meta property="og:title" content="VISYA — o bot completo da sua comunidade">
+<meta property="og:description" content="103 comandos, 104 modelos de servidor e painel web. De guilda de jogo a time de vendas.">
+<meta property="og:image" content="assets/brand/visya-banner.png">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Space+Mono:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap">
 <style>
-  :root{
-    /* Paleta tirada da arte da marca: fundo quase-preto arroxeado, neon azul,
-       magenta e violeta. Nada de cinza puro — todo neutro puxa pro roxo. */
-    --void:#06051a; --panel:#0f0d2b; --panel2:#15123a; --line:#272252;
-    --ink:#f3f1ff; --ink2:#a09bd0; --ink3:#6f6aa0;
-    --sig:#4a72ff; --mag:#ff3ea5; --vio:#a855f7; --cy:#25d8f0; --disc:#5865f2;
-    --disp:"Bricolage Grotesque", system-ui, sans-serif;
-    --mono:"Space Mono", ui-monospace, monospace;
-    --glow:0 0 42px rgba(74,114,255,.42);
-    color-scheme:dark;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{margin:0;background:var(--void);color:var(--ink);font-family:var(--mono);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-  a{color:inherit;text-decoration:none;}
-  .wrap{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
-  ::selection{background:var(--mag);color:#fff;}
-  .idx{font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cy);}
+:root{
+  /* Preto NEUTRO, não azulado: o roxo de antes tingia todo cinza da página e
+     era ele que deixava tudo com cara de "azul cromático".
+     A assinatura passa a ser uma só — verde-limão de terminal — e aparece
+     pouco: no cursor, no prompt, nos marcadores e no que está ativo.
+     O resto é preto e branco-osso, como convém a uma página técnica. */
+  --void:#0b0b0c; --void2:#121214; --panel:#17171a; --panel2:#1d1d21;
+  --line:#26262b; --line2:#3a3a42;
+  --ink:#f2f2ef; --ink2:#a5a5a0; --ink3:#6c6c70;
+  --lim:#c8ff2e;                       /* a assinatura */
+  --lim2:#9fd400;
+  --amb:#ff8a3d; --cor:#ff5a5f; --tea:#3ddad7; --lav:#b39dff;
+  --disc:#5865f2;                      /* só o botão do Discord, que é deles */
+  /* Serifa pra voz, mono pra máquina, sans pra texto corrido.
+     O contraste serifa×mono é a assinatura tipográfica da página. */
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --mono:"Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans:"Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+  --gut:clamp(16px, 4vw, 52px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+body{
+  margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  /* Textura de pontos: dá superfície ao preto sem pesar nada. Fica no body,
+     nunca em elementos `position:fixed` com filter:blur — três deles já
+     derrubaram esta página por estouro de GPU no celular. */
+  background-image:radial-gradient(rgba(242,242,239,.055) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
 
-  /* Manchas de luz ao fundo — é o que dá o ar de grafite neon sem empilhar
-     imagem sobre imagem. Puramente decorativas. */
-  /* Auroras do fundo. Ja foram tres elementos position:fixed de ~55vw com
-     filter:blur(90px) — o navegador recompunha essas camadas gigantes a cada
-     quadro de rolagem e o celular estourava a memoria de GPU (tela branca e
-     recarga). Como radial-gradient ja nasce suave, o blur nao acrescentava
-     nada visualmente: agora sao gradientes pintados direto no body, sem
-     camada extra e sem filtro. */
-  body{background-color:var(--void);
-    background-image:
-      radial-gradient(52vw 52vw at 6% -10%, rgba(74,114,255,.42), transparent 68%),
-      radial-gradient(46vw 46vw at 98% 16%, rgba(255,62,165,.26), transparent 68%),
-      radial-gradient(58vw 58vw at 46% 104%, rgba(168,85,247,.24), transparent 70%);
-    background-attachment:scroll;background-repeat:no-repeat;}
+/* ---------------------------------------------------------- estrutura */
+.env{max-width:1320px;margin:0 auto;padding-inline:var(--gut);}
+.secao{padding-block:clamp(64px,10vw,124px);position:relative;}
+.risco{border-top:1px solid var(--line);}
 
-  .btn{font-family:var(--mono);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.1em;padding:15px 24px;border-radius:4px;cursor:pointer;border:1px solid transparent;transition:transform .14s,box-shadow .2s,background .2s,color .2s;display:inline-flex;gap:9px;align-items:center;}
-  .btn-p{background:linear-gradient(100deg,var(--sig),var(--vio) 58%,var(--mag));color:#fff;box-shadow:var(--glow);}
-  .btn-p:hover{transform:translateY(-2px);box-shadow:0 0 58px rgba(255,62,165,.5);}
-  .btn-o{background:rgba(255,255,255,.06);color:var(--ink);border-color:var(--line);}
-  .btn-o:hover{border-color:var(--cy);color:#fff;transform:translateY(-2px);}
-  .btn:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--cy);outline-offset:3px;}
+/* Marcadores de canto: a moldura técnica que emoldura a página. */
+.cantos{position:relative;}
+.cantos::before,.cantos::after{
+  content:attr(data-canto);position:absolute;top:-26px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--ink3);
+  text-transform:uppercase;pointer-events:none;
+}
+.cantos::before{left:0;}
+.cantos::after{content:attr(data-canto2);right:0;}
 
-  /* NAV */
-  /* Sem backdrop-filter: ele obriga o navegador a reamostrar tudo que passa
-     por tras da barra a cada quadro de rolagem. Num fundo escuro, deixar a
-     barra quase opaca da o mesmo resultado de graca. */
-  nav{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(6,5,26,.94);border-bottom:1px solid var(--line);}
-  nav .wrap{display:flex;align-items:center;height:66px;gap:20px;}
-  .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:1.25rem;letter-spacing:.02em;}
-  .brand svg{width:26px;height:26px;color:#fff;filter:drop-shadow(0 0 10px rgba(74,114,255,.9));}
-  nav .nl{margin-left:auto;display:flex;gap:24px;align-items:center;font-size:.78rem;text-transform:uppercase;letter-spacing:.13em;color:var(--ink2);}
-  nav .nl a:hover{color:var(--cy);}
-  @media(max-width:820px){nav .nl a.hm{display:none;}}
+/* ------------------------------------------------------ barra de topo */
+.prompt{
+  position:sticky;top:0;z-index:60;
+  background:rgba(11,11,12,.94);border-bottom:1px solid var(--line);
+}
+.prompt-in{
+  max-width:1320px;margin:0 auto;padding:0 var(--gut);
+  height:54px;display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:.78rem;
+}
+.cifrao{color:var(--lim);font-weight:700;flex:none;}
+.marca{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.06em;flex:none;text-decoration:none;}
+.marca svg{width:19px;height:19px;color:var(--lim);}
+.caminho{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;}
+.caminho::-webkit-scrollbar{display:none;}
+.caminho a{
+  color:var(--ink3);text-decoration:none;padding:5px 9px;border-radius:4px;
+  white-space:nowrap;transition:color .15s,background .15s;
+}
+.caminho a:hover,.caminho a:focus-visible{color:var(--lim);background:var(--panel);}
+.atalho{
+  flex:none;color:var(--ink3);border:1px solid var(--line2);border-radius:5px;
+  padding:4px 9px;font-size:.66rem;background:transparent;cursor:pointer;
+  font-family:var(--mono);transition:border-color .15s,color .15s;
+}
+.atalho:hover{border-color:var(--lim);color:var(--lim);}
+@media(max-width:700px){.atalho{display:none;} .prompt-in{gap:10px;}}
 
-  /* HERO */
-  .hero{padding:118px 0 60px;border-bottom:1px solid var(--line);position:relative;}
-  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center;}
-  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:34px;}}
-  .kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cy);margin-bottom:14px;}
-  h1{font-family:var(--disp);font-weight:800;font-size:clamp(3.4rem,10vw,8rem);line-height:.86;letter-spacing:-.03em;margin:0;
-     background:linear-gradient(96deg,#fff 18%,#b9c6ff 46%,#ff8fd0 82%);-webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .hero p{font-family:var(--disp);font-weight:400;font-size:clamp(1.05rem,2.2vw,1.45rem);max-width:520px;margin:18px 0 0;color:var(--ink2);line-height:1.4;}
-  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+/* ------------------------------------------------------------- botões */
+.btn{
+  font-family:var(--mono);font-weight:700;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.12em;
+  padding:15px 26px;border-radius:3px;cursor:pointer;text-decoration:none;
+  border:1px solid var(--line2);background:transparent;color:var(--ink);
+  display:inline-flex;gap:9px;align-items:center;
+  transition:background .16s,color .16s,transform .12s,border-color .16s;
+}
+.btn:hover{background:var(--ink);color:var(--void);border-color:var(--ink);transform:translateY(-2px);}
+/* O primário é o limão sobre preto: contraste alto, sem degradê.
+   Degradê colorido em botão era metade do "azul cromático". */
+.btn.p{background:var(--lim);border-color:var(--lim);color:#0b0b0c;}
+.btn.p:hover{background:#dbff6b;border-color:#dbff6b;color:#0b0b0c;}
+:focus-visible{outline:2px solid var(--lim);outline-offset:3px;}
 
-  /* CHAT DEMO */
-  .demo{background:rgba(15,13,43,.86);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 60px rgba(74,114,255,.14);}
-  .demo-top{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--ink2);font-size:.82rem;}
-  .demo-top .hash{color:var(--ink3);font-weight:700;}
-  .demo-top .live{margin-left:auto;display:flex;align-items:center;gap:6px;color:#3ce6a4;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;}
-  .demo-top .live i{width:7px;height:7px;border-radius:50%;background:#3ce6a4;display:inline-block;animation:blink 1.4s infinite;box-shadow:0 0 10px #3ce6a4;}
-  @keyframes blink{50%{opacity:.3;}}
-  .msgs{padding:16px 18px;min-height:330px;display:flex;flex-direction:column;gap:14px;font-family:var(--disp);}
-  .msg{display:flex;gap:11px;align-items:flex-start;opacity:0;transform:translateY(8px);animation:rise .4s forwards;}
-  @keyframes rise{to{opacity:1;transform:none;}}
-  .msg .av{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:700;color:#fff;font-size:.85rem;}
-  .msg .bd .nm{font-weight:700;font-size:.9rem;color:#fff;}
-  .msg .bd .nm span{font-size:.68rem;color:var(--ink3);font-weight:400;margin-left:8px;font-family:var(--mono);}
-  .msg .bd .tx{color:#cdc9ee;font-size:.95rem;line-height:1.35;margin-top:1px;}
-  .msg .bd .tx b{color:#fff;}
-  .msg.bot .nm{color:#c9b8ff;}
-  .botbadge{background:linear-gradient(100deg,var(--sig),var(--vio));color:#fff;font-size:.6rem;font-family:var(--mono);padding:1px 5px;border-radius:3px;margin-left:6px;vertical-align:middle;letter-spacing:.05em;}
-  .msg.typing .tx{display:inline-flex;gap:5px;align-items:center;padding:4px 0;}
-  .msg.typing .dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);display:inline-block;animation:td 1.1s infinite;}
-  .msg.typing .dot:nth-child(2){animation-delay:.16s;} .msg.typing .dot:nth-child(3){animation-delay:.32s;}
-  @keyframes td{0%,60%,100%{opacity:.28;transform:translateY(0);}30%{opacity:1;transform:translateY(-4px);}}
+/* ------------------------------------------------------- tipos de texto */
+.olho{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink3);display:flex;align-items:center;gap:11px;margin-bottom:20px;
+}
+.olho::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line2),transparent);}
+h1,h2,h3{font-family:var(--serif);font-weight:900;line-height:1.02;letter-spacing:-.02em;margin:0;text-wrap:balance;}
+h2{font-size:clamp(2rem,5.2vw,3.5rem);}
+h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
+.sub{color:var(--ink2);font-size:1.02rem;max-width:58ch;margin:16px 0 0;}
+.mini{font-family:var(--mono);font-size:.68rem;color:var(--ink3);letter-spacing:.06em;}
 
-  /* MARQUEE */
-  .marq{background:linear-gradient(90deg,var(--sig),var(--vio) 50%,var(--mag));color:#fff;padding:15px 0;overflow:hidden;position:relative;z-index:1;}
-  .marq .track{display:flex;width:max-content;animation:scroll 32s linear infinite;will-change:transform;font-family:var(--disp);font-weight:700;font-size:1.35rem;}
-  .marq span{margin:0 24px;opacity:.75;white-space:nowrap;} .marq b{color:#fff;opacity:1;}
-  .marq:hover .track{animation-play-state:paused;}
-  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+/* ---------------------------------------------------------------- capa */
+.capa{padding-block:clamp(48px,8vw,96px) clamp(40px,6vw,80px);}
+.capa-grade{display:grid;grid-template-columns:1.06fr .94fr;gap:clamp(28px,4vw,60px);align-items:center;}
+@media(max-width:940px){.capa-grade{grid-template-columns:1fr;}}
+/* Título em branco-osso sólido, com cursor piscando do lado. Sem degradê:
+   texto colorido em gradiente é justamente o efeito que a gente tirou. */
+.titulao{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(4.2rem,15vw,11rem);line-height:.84;letter-spacing:-.045em;
+  margin:0 0 6px;color:var(--ink);display:flex;align-items:baseline;gap:.08em;
+}
+.titulao i{
+  font-style:normal;width:.085em;height:.62em;background:var(--lim);
+  display:inline-block;animation:cursor 1.15s steps(1) infinite;
+}
+@keyframes cursor{0%,49%{opacity:1}50%,100%{opacity:0}}
+.capa .lead{font-size:clamp(1.02rem,1.7vw,1.24rem);color:var(--ink2);max-width:46ch;margin:22px 0 30px;}
+.capa .cta{display:flex;gap:12px;flex-wrap:wrap;}
+.selos{display:flex;gap:26px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--line);}
+.selo b{display:block;font-family:var(--serif);font-size:1.7rem;font-weight:900;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--ink);}
+.selo span{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);}
 
-  section{padding:104px 0;border-bottom:1px solid var(--line);position:relative;z-index:1;}
-  .lead{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:end;margin-bottom:50px;}
-  @media(max-width:820px){.lead{grid-template-columns:1fr;gap:14px;}}
-  .lead h2{font-family:var(--disp);font-weight:800;font-size:clamp(2.1rem,5vw,3.6rem);line-height:.98;letter-spacing:-.02em;margin:.2em 0 0;text-wrap:balance;color:var(--ink);}
-  .lead .desc{font-family:var(--disp);color:var(--ink2);font-size:1.12rem;line-height:1.4;}
+/* janela de terminal — usada na capa, nos modelos, no painel e na IA */
+.janela{background:var(--void2);border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.janela-topo{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.68rem;color:var(--ink3);
+}
+.bolas{display:flex;gap:5px;}
+.bolas i{width:9px;height:9px;border-radius:50%;background:var(--line2);}
+.bolas i:first-child{background:#ff5f57;} .bolas i:nth-child(2){background:#febc2e;} .bolas i:nth-child(3){background:#28c840;}
+.aovivo{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--lim);}
+.aovivo i{width:6px;height:6px;border-radius:50%;background:var(--lim);animation:pisca 1.9s infinite;}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.25}}
+.msgs{padding:15px;display:flex;flex-direction:column;gap:11px;min-height:270px;}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:sobe .3s both;}
+@keyframes sobe{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg .av{width:29px;height:29px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:.72rem;color:#0b0b0c;}
+.msg .nome{font-weight:700;font-size:.84rem;}
+.msg .tag{font-family:var(--mono);font-size:.54rem;background:var(--line2);color:var(--ink);
+  padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:5px;letter-spacing:.06em;}
+.msg .txt{font-size:.88rem;color:var(--ink2);line-height:1.45;}
+.msg .quando{font-family:var(--mono);font-size:.56rem;color:var(--ink3);margin-left:6px;}
+.term{padding:16px;font-family:var(--mono);font-size:.74rem;line-height:1.85;color:var(--ink2);}
+.term b{color:var(--ink);font-weight:700;display:block;}
+.term .liga{color:var(--lim);font-size:.62rem;}
+.term .dentro{padding-left:14px;}
 
-  /* RECURSOS */
-  .feat{border-top:1px solid var(--line);}
-  .feat .row{display:grid;grid-template-columns:70px 1fr 1.2fr;gap:22px;padding:24px 0;border-bottom:1px solid var(--line);align-items:baseline;transition:padding-left .2s,background .2s;}
-  .feat .row:hover{padding-left:14px;background:linear-gradient(90deg,rgba(74,114,255,.14),transparent);}
-  .feat .n{font-size:.82rem;color:var(--cy);}
-  .feat .t{font-family:var(--disp);font-weight:700;font-size:clamp(1.3rem,3vw,2rem);}
-  .feat .d{font-family:var(--disp);color:var(--ink2);font-size:1rem;line-height:1.4;}
-  @media(max-width:760px){.feat .row{grid-template-columns:36px 1fr;}.feat .d{grid-column:1/-1;}}
+/* --------------------------------------------------------------- faixa */
+.faixa{border-block:1px solid var(--line);overflow:hidden;padding-block:13px;background:var(--void2);}
+.faixa-in{display:flex;width:max-content;animation:corre 34s linear infinite;}
+.faixa span{font-family:var(--mono);font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:0 26px;color:var(--ink2);white-space:nowrap;}
+.faixa span i{color:var(--lim);font-style:normal;}
+@keyframes corre{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.faixa:hover .faixa-in{animation-play-state:paused;}
 
-  /* COMANDOS */
-  .cmdbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px;}
-  .cmdbar input{flex:1;min-width:220px;font-family:var(--mono);font-size:.95rem;padding:14px 16px;border:1px solid var(--line);border-radius:6px;background:rgba(15,13,43,.8);color:var(--ink);}
-  .cmdbar input::placeholder{color:var(--ink3);}
-  .cmdbar input:focus{outline:2px solid var(--sig);}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;padding:9px 14px;border:1px solid var(--line);border-radius:99px;cursor:pointer;background:rgba(255,255,255,.03);color:var(--ink2);transition:border-color .15s,color .15s;}
-  .chip:hover{border-color:var(--cy);color:#fff;}
-  .chip.on{background:linear-gradient(100deg,var(--sig),var(--vio));color:#fff;border-color:transparent;box-shadow:var(--glow);}
-  .cmdgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-  @media(max-width:820px){.cmdgrid{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:520px){.cmdgrid{grid-template-columns:1fr;}}
-  .cmd{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:rgba(15,13,43,.72);transition:border-color .15s,transform .1s,box-shadow .2s;}
-  .cmd:hover{border-color:var(--sig);transform:translateY(-2px);box-shadow:0 10px 34px rgba(74,114,255,.2);}
-  .cmd code{font-family:var(--mono);font-weight:700;color:var(--cy);font-size:.98rem;}
-  .cmd p{font-family:var(--disp);color:var(--ink2);font-size:.9rem;margin:6px 0 0;line-height:1.35;}
-  .cmd .cat{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);}
-  .empty{grid-column:1/-1;text-align:center;color:var(--ink2);font-family:var(--disp);padding:30px;}
+/* -------------------------------------------------------- cards de recurso */
+.recursos{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:42px;}
+.rec{background:var(--void);padding:28px 24px 26px;position:relative;transition:background .2s;}
+.rec:hover{background:var(--void2);}
+.rec::before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;
+  background:var(--c);opacity:0;transition:opacity .2s;}
+.rec:hover::before{opacity:1;}
+.rec .num{font-family:var(--mono);font-size:.7rem;color:var(--c);letter-spacing:.14em;
+  display:flex;justify-content:space-between;margin-bottom:18px;}
+.rec .num em{font-style:normal;color:var(--ink3);}
+.rec h3{margin-bottom:9px;}
+.rec p{color:var(--ink2);font-size:.9rem;margin:0;}
 
-  /* JOGOS */
-  .games{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-  @media(max-width:900px){.games{grid-template-columns:repeat(3,1fr);}}
-  @media(max-width:620px){.games{grid-template-columns:repeat(2,1fr);}}
-  .game{border:1px solid var(--line);border-radius:16px;padding:22px 18px;background:linear-gradient(170deg,rgba(21,18,58,.9),rgba(15,13,43,.72));transition:transform .12s,border-color .15s,box-shadow .15s;}
-  .game:hover{transform:translateY(-3px);border-color:var(--mag);box-shadow:0 16px 42px rgba(255,62,165,.22);}
-  .game .em{font-size:2rem;line-height:1;}
-  .game h3{font-family:var(--disp);font-weight:700;font-size:1.12rem;margin:12px 0 4px;color:var(--ink);}
-  .game p{font-family:var(--disp);color:var(--ink2);font-size:.88rem;margin:0 0 12px;line-height:1.35;}
-  .game code{font-family:var(--mono);font-size:.78rem;color:var(--cy);font-weight:700;}
+/* ------------------------------------------------------- trilho de jogos */
+.trilho{display:flex;gap:14px;overflow-x:auto;padding:38px 0 22px;
+  scroll-snap-type:x mandatory;scrollbar-width:thin;}
+.trilho::-webkit-scrollbar{height:7px;}
+.trilho::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px;}
+.jogo{
+  flex:0 0 232px;scroll-snap-align:start;min-height:212px;
+  background:var(--void2);border:1px solid var(--c);border-radius:6px;
+  padding:14px;display:flex;flex-direction:column;position:relative;
+  transition:transform .16s,background .16s;
+}
+.jogo:hover{transform:translateY(-4px);background:var(--panel);}
+.jogo .topo{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--ink3);}
+.jogo .palavra{
+  font-family:var(--serif);font-weight:900;font-size:1.72rem;line-height:.96;
+  letter-spacing:-.03em;color:var(--c);margin:auto 0 10px;
+}
+.jogo .ds{font-size:.78rem;color:var(--ink2);border-top:1px dashed var(--line2);padding-top:9px;}
+.jogo .cmd{font-family:var(--mono);font-size:.66rem;color:var(--ink3);margin-top:7px;}
 
-  /* STATS */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(15,13,43,.8);}
-  .stats .s{padding:30px 22px;border-right:1px solid var(--line);}
-  .stats .s:last-child{border-right:0;}
-  .stats b{font-family:var(--disp);font-weight:800;font-size:clamp(2rem,5vw,3.2rem);display:block;line-height:1;color:#fff;}
-  .stats b em{background:linear-gradient(100deg,var(--cy),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent;font-style:normal;}
-  .stats span{color:var(--ink2);font-size:.85rem;}
-  @media(max-width:720px){.stats{grid-template-columns:1fr 1fr;}.stats .s:nth-child(2){border-right:0;}.stats .s:nth-child(-n+2){border-bottom:1px solid var(--line);}}
+/* -------------------------------------------------------------- comandos */
+.busca{position:relative;margin-top:34px;}
+.busca .cifrao{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:.9rem;}
+.busca input{
+  width:100%;padding:16px 15px 16px 38px;font-family:var(--mono);font-size:.92rem;
+  color:var(--ink);background:var(--void2);border:1px solid var(--line2);border-radius:5px;outline:none;
+}
+.busca input::placeholder{color:var(--ink3);}
+.busca input:focus{border-color:var(--lim);box-shadow:0 0 0 3px rgba(200,255,46,.16);}
+.fichas{display:flex;gap:6px;flex-wrap:wrap;margin-top:15px;}
+.ficha{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:6px 12px;border:1px solid var(--line2);border-radius:99px;color:var(--ink3);
+  cursor:pointer;background:transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.ficha:hover{color:var(--ink);border-color:var(--ink3);}
+.ficha.on{color:#0b0b0c;background:var(--lim);border-color:var(--lim);font-weight:700;}
+.conta{font-family:var(--mono);font-size:.68rem;color:var(--ink3);margin-top:14px;}
+.cmds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:18px;}
+.cmd{background:var(--void);padding:14px 15px;transition:background .15s;}
+.cmd:hover{background:var(--void2);}
+.cmd .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.cmd code{font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--lim);}
+.cmd .cat{font-family:var(--mono);font-size:.55rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink3);border:1px solid var(--line2);border-radius:99px;padding:1px 7px;}
+.cmd p{margin:6px 0 0;font-size:.82rem;color:var(--ink2);}
+.cmd .subs{font-family:var(--mono);font-size:.62rem;color:var(--ink3);margin-top:6px;word-break:break-word;}
+.vazio{grid-column:1/-1;background:var(--void);padding:40px;text-align:center;color:var(--ink3);font-family:var(--mono);font-size:.8rem;}
 
-  /* PAINEL — faixa elevada, não "escura" (o site inteiro já é escuro) */
-  .dark{background:linear-gradient(180deg,rgba(21,18,58,.72),rgba(6,5,26,0));}
-  .dark .lead h2{color:var(--ink);}
-  .dark .lead .desc{color:var(--ink2);}
-  .mock{background:rgba(10,8,34,.92);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.66);}
-  .mock .bar{display:flex;align-items:center;gap:8px;padding:13px 18px;border-bottom:1px solid var(--line);font-size:.78rem;color:var(--ink2);}
-  .mock .dt{width:11px;height:11px;border-radius:50%;background:#2b2758;}
-  .mock .body{display:grid;grid-template-columns:210px 1fr;min-height:330px;}
-  .mock .side{border-right:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:5px;}
-  .mock .srv{display:flex;align-items:center;gap:10px;padding:10px;border-radius:9px;font-family:var(--disp);font-weight:700;background:var(--panel2);}
-  .mock .it{padding:9px 10px;border-radius:9px;color:var(--ink2);font-size:.88rem;}
-  .mock .it.on{background:linear-gradient(100deg,rgba(74,114,255,.34),rgba(168,85,247,.22));color:#fff;}
-  .mock .main{padding:20px;}
-  .mock .mh{font-family:var(--disp);font-weight:800;font-size:1.3rem;margin:0 0 16px;}
-  .mock .tog{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;font-family:var(--disp);}
-  .mock .sw{width:42px;height:24px;border-radius:99px;background:#2b2758;position:relative;flex:none;}
-  .mock .sw.on{background:linear-gradient(100deg,var(--sig),var(--mag));box-shadow:0 0 16px rgba(255,62,165,.5);}
-  .mock .sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;}
-  .mock .sw.on::after{left:21px;}
-  @media(max-width:640px){.mock .body{grid-template-columns:1fr;}.mock .side{flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid var(--line);}}
+/* ---------------------------------------------------------- dois blocos */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,3.5vw,48px);align-items:center;}
+@media(max-width:900px){.duo{grid-template-columns:1fr;}}
+.lista{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:12px;}
+.lista li{display:flex;gap:12px;align-items:flex-start;font-size:.94rem;color:var(--ink2);}
+.lista li b{color:var(--ink);font-weight:600;}
+.lista .mark{font-family:var(--mono);font-size:.68rem;color:var(--lim);flex:none;padding-top:3px;}
 
-  /* FAQ */
-  details{border-bottom:1px solid var(--line);padding:20px 0;}
-  details summary{font-family:var(--disp);font-weight:700;font-size:1.15rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;color:var(--ink);}
-  details summary::-webkit-details-marker{display:none;}
-  details summary::after{content:"+";color:var(--mag);font-weight:700;}
-  details[open] summary::after{content:"–";}
-  details p{font-family:var(--disp);color:var(--ink2);margin:14px 0 0;line-height:1.5;}
+/* números */
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);}
+.numero{background:var(--void);padding:30px 22px;text-align:center;}
+.numero b{display:block;font-family:var(--serif);font-weight:900;font-size:clamp(2.1rem,4.6vw,3.1rem);
+  line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);}
+.numero span{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink3);margin-top:9px;display:block;}
 
-  .final{text-align:center;}
-  .final h2{font-family:var(--disp);font-weight:800;font-size:clamp(2.6rem,10vw,7rem);line-height:.86;letter-spacing:-.03em;margin:0 0 22px;
-    background:linear-gradient(96deg,#fff,#b9c6ff 40%,#ff8fd0);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  footer{background:rgba(4,3,18,.9);color:var(--ink);padding:44px 0;border-top:1px solid var(--line);position:relative;z-index:1;}
-  footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.84rem;color:var(--ink2);}
-  footer .fl{display:flex;gap:20px;text-transform:uppercase;letter-spacing:.12em;} footer a:hover{color:var(--cy);}
-  @media(prefers-reduced-motion:reduce){.marq .track,.msg{animation:none;opacity:1;transform:none;}}
+/* perguntas */
+.faq{margin-top:34px;border-top:1px solid var(--line);}
+.faq details{border-bottom:1px solid var(--line);}
+.faq summary{
+  padding:19px 2px;cursor:pointer;list-style:none;display:flex;gap:14px;align-items:center;
+  font-family:var(--serif);font-weight:700;font-size:1.08rem;
+}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::after{content:"+";margin-left:auto;font-family:var(--mono);color:var(--ink3);font-size:1.2rem;}
+.faq details[open] summary::after{content:"−";color:var(--lim);}
+.faq .q{font-family:var(--mono);font-size:.64rem;color:var(--lim);flex:none;}
+.faq p{margin:0 0 20px 34px;color:var(--ink2);font-size:.93rem;max-width:70ch;}
+.faq code{font-family:var(--mono);font-size:.86em;color:var(--lim);}
+
+/* fechamento */
+.fim{text-align:center;padding-block:clamp(70px,11vw,140px);border-top:1px solid var(--line);}
+.fim h2{font-size:clamp(2.4rem,7vw,5rem);}
+.fim .olho{justify-content:center;}
+.fim .olho::after{display:none;}
+.fim .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px;}
+footer{border-top:1px solid var(--line);padding-block:34px 44px;}
+.pe{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.66rem;color:var(--ink3);}
+.pe a{color:var(--ink3);text-decoration:none;}
+.pe a:hover{color:var(--lim);}
+.pe nav{display:flex;gap:18px;flex-wrap:wrap;}
+.pe svg{color:var(--lim);}
 </style>
+</head>
+<body>
 
-<svg width="0" height="0" style="position:absolute"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
+<!-- símbolo da marca, reusado no topo e no rodapé -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
 
-<nav><div class="wrap">
-  <div class="brand"><svg><use href="#v"/></svg> VISYA</div>
-  <div class="nl">
-    <a class="hm" href="#recursos">Recursos</a>
-    <a class="hm" href="#jogos">Jogos</a>
-    <a class="hm" href="#comandos">Comandos</a>
-    <a href="https://painel.visya.app.br" target="_blank" rel="noopener">Painel ↗</a>
-    <a href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ↗</a>
+<!-- Barra de topo em forma de prompt: a navegação é o caminho digitado. -->
+<div class="prompt">
+  <div class="prompt-in">
+    <span class="cifrao">$</span>
+    <a class="marca" href="#topo" aria-label="VISYA — início"><svg aria-hidden="true"><use href="#v"/></svg>VISYA</a>
+    <nav class="caminho" aria-label="Seções">
+      <a href="#recursos">/recursos</a>
+      <a href="#modelos">/modelos</a>
+      <a href="#jogos">/jogos</a>
+      <a href="#comandos">/comandos</a>
+      <a href="#painel">/painel</a>
+      <a href="#faq">/faq</a>
+    </nav>
+    <button class="atalho" id="atalho" type="button">buscar comando · Ctrl K</button>
   </div>
-</div></nav>
+</div>
 
-<div class="hero"><div class="wrap hero-grid">
-  <div>
-    <div class="kicker">Community · Creativity · Beyond</div>
-    <h1>VISYA</h1>
-    <p>O organismo que administra seu servidor. Moderação, níveis, economia, música e IA — vivos, no seu controle. De guilda de Free Fire a comunidade de qualquer ramo.</p>
+<main id="topo">
+
+<!-- ============================================================ CAPA -->
+<section class="capa">
+  <div class="env cantos" data-canto="2026 &lt;/" data-canto2="/&gt; discord bot">
+    <div class="capa-grade">
+      <div>
+        <div class="olho">community · creativity · beyond</div>
+        <h1 class="titulao">VISYA<i aria-hidden="true"></i></h1>
+        <p class="lead">
+          O bot completo da sua comunidade. Moderação, níveis, economia, tickets,
+          jogos e música com nó de áudio próprio — de guilda de jogo a time de vendas,
+          sem trocar de bot no caminho.
+        </p>
+        <div class="cta">
+          <a class="btn p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord →</a>
+          <a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Abrir o painel</a>
+        </div>
+        <div class="selos">
+          <div class="selo"><b>103</b><span>comandos</span></div>
+          <div class="selo"><b>104</b><span>modelos de servidor</span></div>
+          <div class="selo"><b>13</b><span>jogos no chat</span></div>
+          <div class="selo"><b>24/7</b><span>no ar</span></div>
+        </div>
+      </div>
+
+      <div class="janela">
+        <div class="janela-topo">
+          <div class="bolas"><i></i><i></i><i></i></div>
+          <span>#geral</span>
+          <span class="aovivo"><i></i>ao vivo</span>
+        </div>
+        <div class="msgs" id="chat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== FAIXA -->
+<div class="faixa" aria-hidden="true"><div class="faixa-in" id="faixa"></div></div>
+
+<!-- ======================================================= RECURSOS -->
+<section class="secao" id="recursos">
+  <div class="env cantos" data-canto="001 ▷" data-canto2="//// módulos">
+    <div class="olho">01 — recursos</div>
+    <h2>Uma criatura<br>de mil funções</h2>
+    <p class="sub">Cada módulo roda sozinho, 24 horas por dia. Você liga o que quiser, servidor por servidor — e desliga o que não usa.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+</section>
+
+<!-- ======================================================== MODELOS -->
+<section class="secao risco" id="modelos">
+  <div class="env cantos" data-canto="002 ▷" data-canto2="//// estruturas">
+    <div class="olho">02 — modelos de servidor</div>
+    <div class="duo">
+      <div>
+        <h2>Servidor pronto<br>em um clique</h2>
+        <p class="sub">
+          104 estruturas completas de canais e cargos, uma por assunto. Escolhe,
+          vê a prévia inteira e aplica — os canais já saem ligados ao recurso que
+          demonstram.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[30]</span><span><b>Jogos</b> — Fortnite, GTA RP, Valorant, CS2, LoL, Minecraft, Free Fire, WoW e mais</span></li>
+          <li><span class="mark">[20]</span><span><b>Negócios</b> — empresarial, vendas, e-commerce, agência, startup, imobiliária, advocacia</span></li>
+          <li><span class="mark">[10]</span><span><b>Educação</b> — vestibular, concursos, idiomas, programação, faculdade</span></li>
+          <li><span class="mark">[10]</span><span><b>Criadores</b> — streamer, canal, podcast, música, fotografia, escrita</span></li>
+          <li><span class="mark">[34]</span><span><b>Cultura e convivência</b> — anime, K-pop, RPG, futebol, pets, fé, bem-estar</span></li>
+        </ul>
+        <div class="cta" style="margin-top:28px"><a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Ver a galeria →</a></div>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>modelo · gta-rp</span></div>
+        <div class="term">
+          <b>【 PORTARIA 】</b>
+          <div class="dentro">#『👋』chegada <span class="liga">liga boasVindas</span></div>
+          <div class="dentro">#『📜』regras-da-cidade</div>
+          <div class="dentro">#『🪪』whitelist <span class="liga">liga candidaturas</span></div>
+          <b style="margin-top:9px">【 SERVIÇOS 】</b>
+          <div class="dentro">#『🚓』policia</div>
+          <div class="dentro">#『🚑』paramedicos</div>
+          <div class="dentro">#『🔧』mecanica</div>
+          <b style="margin-top:9px">【 OCORRÊNCIAS 】</b>
+          <div class="dentro">#『🚨』denuncias <span class="liga">liga denuncias</span></div>
+          <div style="margin-top:11px;color:var(--ink3);font-size:.66rem">6 categorias · 25 canais · 12 cargos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== JOGOS -->
+<section class="secao risco" id="jogos">
+  <div class="env cantos" data-canto="003 ▷" data-canto2="//// no chat">
+    <div class="olho">03 — jogos</div>
+    <h2>Bora jogar no chat</h2>
+    <p class="sub">Do clássico ao caos, direto no Discord — sozinho ou com a tropa. Cada um na sua sala, com ranking próprio.</p>
+  </div>
+  <div class="env"><div class="trilho" id="trilho"></div></div>
+</section>
+
+<!-- ======================================================= COMANDOS -->
+<section class="secao risco" id="comandos">
+  <div class="env cantos" data-canto="004 ▷" data-canto2="//// slash">
+    <div class="olho">04 — comandos</div>
+    <h2>103 comandos,<br>um só bot</h2>
+    <p class="sub">Tudo em português, com subcomandos organizados. Busque pelo nome ou pelo que ele faz.</p>
+    <div class="busca">
+      <span class="cifrao">$</span>
+      <input id="q" type="search" placeholder="buscar… ex.: castigo, sorteio, musica, nivel" autocomplete="off" spellcheck="false" aria-label="Buscar comando">
+    </div>
+    <div class="fichas" id="fichas"></div>
+    <div class="conta" id="conta"></div>
+    <div class="cmds" id="cmds"></div>
+  </div>
+</section>
+
+<!-- ========================================================= NÚMEROS -->
+<section class="secao risco">
+  <div class="env">
+    <div class="numeros">
+      <div class="numero"><b>103</b><span>comandos</span></div>
+      <div class="numero"><b>104</b><span>modelos</span></div>
+      <div class="numero"><b>400+</b><span>sons na call</span></div>
+      <div class="numero"><b>13</b><span>jogos</span></div>
+      <div class="numero"><b>19</b><span>abas no painel</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== PAINEL -->
+<section class="secao risco" id="painel">
+  <div class="env cantos" data-canto="005 ▷" data-canto2="//// navegador">
+    <div class="olho">05 — painel</div>
+    <div class="duo">
+      <div>
+        <h2>Configure sem<br>digitar comando</h2>
+        <p class="sub">
+          Entra com o Discord e ajusta cada servidor onde você é admin. Canal por
+          canal, cargo por cargo, módulo por módulo — e o que você muda vale na hora.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[01]</span><span><b>Um lugar por assunto</b> — 19 abas, da moderação à loja</span></li>
+          <li><span class="mark">[02]</span><span><b>Copiloto</b> — descreve o que quer e a IA configura</span></li>
+          <li><span class="mark">[03]</span><span><b>Backup do servidor</b> — pra reconstruir depois de um desastre</span></li>
+          <li><span class="mark">[04]</span><span><b>Pagamentos por PIX</b> — sua conta Mercado Pago, seu dinheiro</span></li>
+          <li><span class="mark">[05]</span><span><b>Auditoria</b> — quem mexeu no quê, e quando</span></li>
+        </ul>
+        <div class="cta" style="margin-top:28px"><a class="btn p" href="https://painel.visya.app.br" target="_blank" rel="noopener">Entrar no painel →</a></div>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>painel.visya.app.br</span></div>
+        <div class="term" style="line-height:2">
+          <div style="color:var(--ink3);font-size:.62rem;letter-spacing:.14em">CONFIGURAÇÃO</div>
+          <div>◆ Geral</div>
+          <div style="color:var(--ink);background:rgba(200,255,46,.1);border-left:2px solid var(--lim);padding-left:8px;margin-left:-10px">🧩 Modelos de servidor</div>
+          <div>👋 Boas-vindas &amp; Saída</div>
+          <div>⭐ Níveis &amp; XP</div>
+          <div>🛡️ Moderação</div>
+          <div>🎵 Música &amp; Soundboard</div>
+          <div>🎫 Chamados &amp; Verificação</div>
+          <div style="color:var(--ink3);font-size:.62rem;letter-spacing:.14em;margin-top:10px">FERRAMENTAS</div>
+          <div>✦ Copiloto</div>
+          <div>💳 Pagamentos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================== IA -->
+<section class="secao risco" id="ia">
+  <div class="env cantos" data-canto="006 ▷" data-canto2="//// cérebro">
+    <div class="olho">06 — inteligência</div>
+    <div class="duo">
+      <div>
+        <h2>Fala com ele<br>como fala com gente</h2>
+        <p class="sub">
+          O VISYA entende o pedido e executa. Membro pede música e ele toca;
+          admin pede configuração e ele configura. O que é ação de liderança
+          continua só pra liderança.
+        </p>
+        <ul class="lista">
+          <li><span class="mark">[♪]</span><span><b>Toca música</b> por nome, link ou playlist — pra qualquer membro</span></li>
+          <li><span class="mark">[⚙]</span><span><b>Configura o servidor</b> conversando — só pra admin</span></li>
+          <li><span class="mark">[🌐]</span><span><b>Traduz e resume</b> conversa pelo menu de contexto</span></li>
+          <li><span class="mark">[🛡]</span><span><b>Nada destrutivo</b> — não existe ferramenta de apagar ou banir, de propósito</span></li>
+        </ul>
+      </div>
+      <div class="janela">
+        <div class="janela-topo"><div class="bolas"><i></i><i></i><i></i></div><span>#ia</span><span class="aovivo"><i></i>pensando</span></div>
+        <div class="msgs" id="iachat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= FAQ -->
+<section class="secao risco" id="faq">
+  <div class="env cantos" data-canto="007 ▷" data-canto2="//// dúvidas">
+    <div class="olho">07 — perguntas</div>
+    <h2>O que costumam<br>perguntar</h2>
+    <div class="faq">
+      <details>
+        <summary><span class="q">[01]</span>O VISYA é de graça?</summary>
+        <p>É. Todos os módulos funcionam sem pagar nada. O painel tem integração com Mercado Pago pra <em>você</em> vender cargos e produtos no seu servidor — esse dinheiro vai pra sua conta, não pra nossa.</p>
+      </details>
+      <details>
+        <summary><span class="q">[02]</span>Serve pro meu servidor, que não é de jogo?</summary>
+        <p>Serve. Nada no bot é amarrado a um nicho: o módulo de Free Fire é opcional, e dos 104 modelos de servidor, 20 são de negócios e 10 de educação. O que decide é o que você liga.</p>
+      </details>
+      <details>
+        <summary><span class="q">[03]</span>A música toca do YouTube?</summary>
+        <p>Link do YouTube e do Spotify funcionam pra <b>ler a lista</b> — faixas, ordem, até 100 itens. O áudio vem do SoundCloud, escolhido pelo catálogo do Deezer com trava de duração, que é o que impede tocar versão acelerada ou cover no lugar da original. O YouTube não libera áudio pra IP de datacenter, e contornar isso não é caminho que a gente siga.</p>
+      </details>
+      <details>
+        <summary><span class="q">[04]</span>Preciso saber programar?</summary>
+        <p>Não. O painel cobre tudo pelo navegador, e o copiloto configura conversando. No Discord, <code>/setup</code> resolve o essencial.</p>
+      </details>
+      <details>
+        <summary><span class="q">[05]</span>Aplicar um modelo apaga meus canais?</summary>
+        <p>Não apaga nada. O modelo <b>cria</b> o que falta e <b>renomeia</b> o que já existe com nome parecido. A prévia no painel mostra exatamente o que vai aparecer, antes de você confirmar.</p>
+      </details>
+      <details>
+        <summary><span class="q">[06]</span>E os dados do meu servidor?</summary>
+        <p>Cada servidor tem a própria configuração, isolada das outras. O bot só lê o que precisa pra funcionar, e nenhuma ação destrutiva existe na IA — por decisão de projeto, não por descuido.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= FIM -->
+<section class="fim">
+  <div class="env">
+    <div class="olho">pronto quando você estiver</div>
+    <h2>Chama o VISYA<br>pro seu servidor</h2>
     <div class="cta">
-      <a class="btn btn-p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord</a>
-      <a class="btn btn-o" href="https://discord.gg/qJYdgTnZh" target="_blank" rel="noopener">Entrar no servidor</a>
+      <a class="btn p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord →</a>
+      <a class="btn" href="https://painel.visya.app.br" target="_blank" rel="noopener">Abrir o painel</a>
     </div>
   </div>
-  <div class="demo">
-    <div class="demo-top"><span class="hash">#</span> geral <span class="live"><i></i> ao vivo</span></div>
-    <div class="msgs" id="chat"></div>
-  </div>
-</div></div>
+</section>
 
-<div class="marq"><div class="track" aria-hidden="true">
-  <span>MODERAÇÃO</span><b>✦</b><span>NÍVEIS</span><b>✦</b><span>ECONOMIA</span><b>✦</b><span>SOUNDBOARD</span><b>✦</b><span>IA</span><b>✦</b><span>SORTEIOS</span><b>✦</b><span>JOGOS</span><b>✦</b><span>ONBOARDING</span><b>✦</b>
-  <span>MODERAÇÃO</span><b>✦</b><span>NÍVEIS</span><b>✦</b><span>ECONOMIA</span><b>✦</b><span>SOUNDBOARD</span><b>✦</b><span>IA</span><b>✦</b><span>SORTEIOS</span><b>✦</b><span>JOGOS</span><b>✦</b><span>ONBOARDING</span><b>✦</b>
-</div></div>
+</main>
 
-<section id="recursos"><div class="wrap">
-  <div class="lead"><div><div class="idx">01 — Recursos</div><h2>Uma criatura de mil funções</h2></div>
-  <div class="desc">Cada módulo roda sozinho, 24 horas. Você liga o que quiser — por servidor.</div></div>
-  <div class="feat">
-    <div class="row"><div class="n">/01</div><div class="t">Moderação</div><div class="d">Advertências, castigo, anti-raid, anti-flood e AutoMod nativo. A ordem sem esforço.</div></div>
-    <div class="row"><div class="n">/02</div><div class="t">Níveis & XP</div><div class="d">Ranking por mensagens e voz, com cartão de nível gerado em imagem.</div></div>
-    <div class="row"><div class="n">/03</div><div class="t">Economia & Loja</div><div class="d">Coins, daily, cassino, loja de cargos e transferências entre membros.</div></div>
-    <div class="row"><div class="n">/04</div><div class="t">Soundboard</div><div class="d">400+ sons do Brasil na call, com busca por nome e painel de botões.</div></div>
-    <div class="row"><div class="n">/05</div><div class="t">IA integrada</div><div class="d">Um assistente que conversa, ajuda e configura o servidor por você.</div></div>
-    <div class="row"><div class="n">/06</div><div class="t">Live & Onboarding</div><div class="d">Avisa quando você fica ao vivo e recebe cada novo membro automaticamente.</div></div>
-  </div>
-</div></section>
-
-<section id="jogos"><div class="wrap">
-  <div class="lead"><div><div class="idx">02 — Jogos</div><h2>Bora jogar no chat</h2></div>
-  <div class="desc">Do clássico ao caos: jogos direto no Discord, sozinho ou com a tropa.</div></div>
-  <div class="games">
-    <div class="game"><div class="em">🎯</div><h3>Jogo da Velha</h3><p>O clássico 3x3 — desafie alguém.</p><code>/jogodavelha</code></div>
-    <div class="game"><div class="em">🔴</div><h3>Lig-4</h3><p>Alinhe 4 peças antes do rival.</p><code>/connect4</code></div>
-    <div class="game"><div class="em">🪢</div><h3>Forca</h3><p>Adivinhe a palavra letra a letra.</p><code>/forca</code></div>
-    <div class="game"><div class="em">🟩</div><h3>Wordle</h3><p>Descubra a palavra do dia.</p><code>/wordle</code></div>
-    <div class="game"><div class="em">🔤</div><h3>Anagrama</h3><p>Desembaralhe a palavra.</p><code>/anagrama</code></div>
-    <div class="game"><div class="em">🧠</div><h3>Quiz</h3><p>Perguntas de conhecimento.</p><code>/quiz</code></div>
-    <div class="game"><div class="em">🛑</div><h3>Stop</h3><p>Adedonha com a letra sorteada.</p><code>/stop</code></div>
-    <div class="game"><div class="em">🚢</div><h3>Batalha Naval</h3><p>Afunde a frota inimiga.</p><code>/batalhanaval</code></div>
-    <div class="game"><div class="em">🔎</div><h3>Caça-Palavras</h3><p>Ache as palavras escondidas.</p><code>/cacapalavras</code></div>
-    <div class="game"><div class="em">🧩</div><h3>Memória</h3><p>Encontre os pares.</p><code>/memoria</code></div>
-    <div class="game"><div class="em">🔥</div><h3>Verdade ou Desafio</h3><p>Escolha e encare.</p><code>/vab</code></div>
-    <div class="game"><div class="em">🍻</div><h3>Eu Nunca</h3><p>Confessa aí pra tropa.</p><code>/eununca</code></div>
-    <div class="game"><div class="em">🎰</div><h3>Cassino</h3><p>Aposte suas coins na sorte.</p><code>/slot · /roleta</code></div>
-  </div>
-</div></section>
-
-<section id="comandos"><div class="wrap">
-  <div class="lead"><div><div class="idx">03 — Comandos</div><h2>100+ comandos, um só bot</h2></div>
-  <div class="desc">Busque, filtre e veja tudo que o VISYA faz. Slash commands em português.</div></div>
-  <div class="cmdbar">
-    <input id="q" type="text" placeholder="Buscar comando... (ex: nivel, som, sorteio)" autocomplete="off">
-    <div class="chips" id="chips"></div>
-  </div>
-  <div class="cmdgrid" id="cmds"></div>
-</div></section>
-
-<section class="dark"><div class="wrap">
-  <div class="stats" id="stats">
-    <div class="s"><b data-n="100">0</b><span>comandos</span></div>
-    <div class="s"><b data-n="12">0</b><span>módulos</span></div>
-    <div class="s"><b data-n="423">0</b><span>sons</span></div>
-    <div class="s"><b data-n="24" data-suf="/7">0</b><span>sempre no ar</span></div>
-  </div>
-</div></section>
-
-<section id="painel" class="dark" style="border-top:1px solid #26262e"><div class="wrap">
-  <div class="lead"><div><div class="idx">04 — Painel</div><h2>Controle tudo pelo navegador</h2></div>
-  <div class="desc">Login com Discord, escolha o servidor e comande cada módulo. Sem digitar comando.<br><br><a class="btn btn-p" href="https://painel.visya.app.br" target="_blank" rel="noopener">Abrir painel ↗</a></div></div>
-  <div class="mock">
-    <div class="bar"><span class="dt"></span><span class="dt"></span><span class="dt"></span> &nbsp; painel.visya.app.br</div>
-    <div class="body">
-      <div class="side">
-        <div class="srv"><svg width="20" height="20" style="color:#fff"><use href="#v"/></svg> N E X T</div>
-        <div class="it on">Visão geral</div><div class="it">Moderação</div><div class="it">Níveis</div><div class="it">Economia</div><div class="it">Boas-vindas</div>
-      </div>
-      <div class="main">
-        <div class="mh">Módulos</div>
-        <div class="tog"><span>🛡️ Moderação</span><span class="sw on"></span></div>
-        <div class="tog"><span>⭐ Níveis & XP</span><span class="sw on"></span></div>
-        <div class="tog"><span>🪙 Economia</span><span class="sw on"></span></div>
-        <div class="tog"><span>🔊 Soundboard</span><span class="sw"></span></div>
-      </div>
+<footer>
+  <div class="env pe">
+    <div style="display:flex;align-items:center;gap:9px">
+      <svg width="16" height="16" aria-hidden="true"><use href="#v"/></svg>
+      VISYA · 2026
     </div>
+    <nav>
+      <a href="#recursos">Recursos</a>
+      <a href="#modelos">Modelos</a>
+      <a href="#comandos">Comandos</a>
+      <a href="https://painel.visya.app.br" target="_blank" rel="noopener">Painel ↗</a>
+    </nav>
+    <div>feito no Brasil · pt-BR</div>
   </div>
-</div></section>
-
-<section id="ia"><div class="wrap">
-  <div class="lead"><div><div class="idx">05 — IA no Discord</div><h2>Configure conversando</h2></div>
-  <div class="desc">Fale com a VISYA em português e ela executa. Ao entrar no servidor, ela cria um canal privado — só pros líderes — fixado no topo.</div></div>
-  <div class="demo" style="max-width:760px;margin:0 auto">
-    <div class="demo-top"><span class="hash">🔒</span> visya-líderes <span class="live" style="color:#8a8a95"><i style="background:#8a8a95;animation:none"></i> privado · líderes</span></div>
-    <div class="msgs" id="iachat"></div>
-  </div>
-  <p style="text-align:center;color:var(--ink2);font-family:var(--disp);margin-top:18px;font-size:.98rem">🔒 Canal criado <b>automaticamente</b> ao adicionar o VISYA — fixado no topo, visível só pros líderes.</p>
-</div></section>
-
-<section id="faq"><div class="wrap" style="max-width:800px">
-  <div class="idx" style="text-align:center;margin-bottom:8px">06 — Dúvidas</div>
-  <h2 style="font-family:var(--disp);font-weight:800;font-size:clamp(2rem,5vw,3rem);text-align:center;margin:0 0 30px;letter-spacing:-.02em">Perguntas frequentes</h2>
-  <details open><summary>O VISYA é gratuito?</summary><p>Sim. Adicione ao seu servidor e use todos os módulos sem custo. Recursos premium virão como opção, nunca travando o essencial.</p></details>
-  <details><summary>Preciso saber programar pra configurar?</summary><p>Não. Use <code>/setup</code> no Discord ou o painel web: escolhe canais e cargos em cliques.</p></details>
-  <details><summary>Funciona em qualquer servidor?</summary><p>Sim — cada servidor tem sua própria configuração. O VISYA nasceu na NEXT Guild FF e hoje atende qualquer comunidade.</p></details>
-  <details><summary>O bot fica online 24 horas?</summary><p>Fica. Roda em servidor dedicado, com deploy automático e monitoramento.</p></details>
-</div></section>
-
-<section class="final"><div class="wrap">
-  <div class="idx" style="margin-bottom:18px">07 — Bora</div>
-  <h2>DÊ VIDA AO<br>SEU SERVIDOR</h2>
-  <a class="btn btn-p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=8&scope=bot%20applications.commands" target="_blank" rel="noopener">Adicionar ao Discord</a>
-</div></section>
-
-<footer><div class="wrap">
-  <div class="brand"><svg style="width:22px;height:22px"><use href="#v"/></svg> VISYA</div>
-  <div class="fl"><a href="#recursos">Recursos</a><a href="#comandos">Comandos</a><a href="#painel">Painel</a><a href="https://discord.gg/qJYdgTnZh" target="_blank" rel="noopener">Servidor</a></div>
-  <div>visya.app — © 2026 · NEXT Guild FF</div>
-</div></footer>
-
+</footer>
+<script>window.__CMDS__=[["/adv","Moderação","Adverte um membro e guarda no histórico",[]],["/agendarevento","Free Fire","Cria um Evento do Discord (aba Eventos, com botão de \"Interessado\")",[]],["/anagrama","Jogos","Desembaralhe a palavra — 1º a acertar ganha XP",[]],["/aniversario","Social","Cadastra seu aniversário pro bot te parabenizar",["definir","remover","listar"]],["/antiflood","Moderação","Liga ou desliga o bloqueio de flood/spam (AutoMod)",[]],["/antilink","Moderação","Liga ou desliga o bloqueio de links (AutoMod)",[]],["/antipalavra","Moderação","Gerencia a lista de palavras proibidas",["add","remover","listar"]],["/antitoxic","Moderação","Liga ou desliga o filtro de palavrão/ofensa (AutoMod)",[]],["/autocargo","Administração","Cargos que o membro pega sozinho (botões)",["add","remover","listar","painel"]],["/autoresposta","Administração","Faz o bot responder sozinho quando alguém escrever um gatilho",["add","remover","listar"]],["/banimento","Free Fire","Verifica se uma conta do Free Fire está banida",[]],["/batalhanaval","Jogos","Batalha naval — afunde os navios escondidos do tabuleiro",[]],["/bola8","Diversão","Faça uma pergunta de sim/não à bola 8 mágica",[]],["/cacapalavras","Jogos","Caça-palavras — achem as palavras na grade e digitem no chat",[]],["/candidatura","Social","Responde o formulário de candidatura do servidor",["enviar","painel"]],["/casal","Diversão","Sorteia o casal do dia da guilda",[]],["/casar","Social","Pede alguém em namoro (a pessoa precisa aceitar)",["pedir","terminar","ranking"]],["/cassino","Cassino","Aposta no cassino: moeda, roleta ou caça-níquel",["moeda","roleta","slot"]],["/castigo","Moderação","Deixa um membro de castigo (não fala nem entra em call) por um tempo",[]],["/chance","Diversão","Calcula a chance de acontecer alguma coisa",[]],["/charada","Diversão","Uma charada pra você quebrar a cabeça (resposta escondida)",[]],["/connect4","Jogos","Desafia alguém pro Lig-4 (Connect 4)",[]],["/convites","Social","Mostra quantos membros você trouxe e o ranking de convites",[]],["/credito","Free Fire","Pontuação de crédito (comportamento) dos membros",[]],["/dado","Diversão","Rola um ou mais dados",[]],["/daily","Economia","Pega sua recompensa diária de 🪙 coins",[]],["/darcoins","Economia","Dá (ou tira, com valor negativo) coins de um membro",[]],["/destaques","Free Fire","Os melhores membros da guilda",[]],["/duelo","Economia","Desafia alguém: quem ganhar leva a aposta",[]],["/embed","Administração","Monta e publica um embed bonito num canal",[]],["/enquete","Social","Cria uma enquete com votação nativa do Discord",[]],["/escolher","Diversão","Deixa o VISYA escolher entre as opções (separe por ; ou ,)",[]],["/eununca","Jogos","Solta um \"Eu nunca...\" pra galera responder",[]],["/ficha","Free Fire","Mostra honra, partidas e tempo sem jogar",[]],["/forca","Jogos","Jogo da forca — digitem letras no chat",[]],["/frase","Diversão","Solta uma piada, cantada, elogio, conselho, fato e mais",[]],["/guia","Social","Resumo do que tem neste servidor",[]],["/guilda","Free Fire","Panorama geral da guilda",[]],["/honra","Free Fire","Contribuição semanal de cada membro na guilda",[]],["/ia","IA","Fala com o VISYA (IA)",[]],["/importar","Free Fire","Cadastra vários membros da guilda de uma vez (cola a lista de IDs)",[]],["/inativos","Free Fire","Lista quem está sem jogar há mais de X dias",[]],["/interagir","Interação","Interage com alguém: abraço, beijo, tapa, cafuné…",["abraco","beijo","cafune","soco","tapa","mordida","mata"]],["/inventario","Economia","Seus itens",["ver","usar"]],["/jogodavelha","Jogos","Desafia alguém pro jogo da velha",[]],["/legendas","Administração","Personaliza as mensagens de entrada e saída de membros",[]],["/lembrete","Utilidade","O bot te lembra de algo depois de um tempo",[]],["/lento","Moderação","Modo lento: intervalo mínimo entre mensagens (0 desliga)",[]],["/limpar","Moderação","Apaga as últimas N mensagens deste canal",[]],["/listadv","Moderação","Mostra o histórico de advertências de um membro",[]],["/live","Administração","Testa a detecção de live e (se quiser) dispara o aviso",[]],["/lock","Moderação","Tranca este canal (só a staff fala)",[]],["/loja","Economia","Vitrine da loja e compra de itens com coins",["ver","comprar","add","remover"]],["/marcar","Moderação","Marca todos (@everyone) ou um cargo, com um recado",[]],["/medidor","Diversão","Mede um traço (do bem) de alguém",[]],["/membros","Free Fire","Lista todos os membros cadastrados",[]],["/memoria","Jogos","Jogo da memória — achem os pares juntos",[]],["/missoes","Social","Vê as missões de hoje e resgata o prêmio",[]],["/moeda","Diversão","Joga uma moeda: cara ou coroa",[]],["/mover","Voz","Move um membro para outro canal de voz",[]],["/musica","Música","Música na call: tocar, fila e controles",["tocar","radio","pular","fila","agora","pausar","retomar","volume","loop","parar"]],["/nivel","Social","Mostra seu nível e progresso (ou o de outro membro)",[]],["/pagar","Economia","Transfere 🪙 coins pra outro membro",[]],["/painel","Utilidade","Publica painéis do servidor",["jogos","verificar","chamados","loja"]],["/parcerias","Administração","Lista e gerencia as parcerias da guilda",["add","remover","listar"]],["/partida","Free Fire","Registra e acompanha os resultados das partidas da guilda",["registrar","listar","stats"]],["/perfil","Social","Mostra o cartão de um membro",["ver","editar"]],["/ping","Utilidade","Testa se o VISYA está respondendo",[]],["/piores","Free Fire","Membros que preocupam (inativos, honra baixa, banidos)",[]],["/ppt","Diversão","Pedra, papel ou tesoura contra o VISYA",[]],["/promover","Moderação","Dá um cargo a um membro",[]],["/puxar","Voz","Traz um membro para o canal de voz onde você está",[]],["/quando","Diversão","Diz quando algo vai acontecer",[]],["/quiz","Diversão","Pergunta de quiz — o primeiro a acertar ganha XP",[]],["/rank","Social","Mostra o ranking do servidor",[]],["/ranking","Jogos","Mostra o ranking de vitórias de um jogo",[]],["/rebaixar","Moderação","Remove um cargo de um membro",[]],["/registrar","Free Fire","Vincula sua conta do Free Fire ao seu Discord",[]],["/rep","Social","Dá um +rep a um membro ou vê o ranking",["dar","ver","rank"]],["/reunir","Voz","Move todo mundo de um canal de voz para outro",[]],["/ricos","Economia","Mostra os mais ricos em 🪙 coins",[]],["/rmadv","Moderação","Remove uma advertência de um membro pelo ID",[]],["/saidas","Free Fire","Quem saiu do servidor recentemente",[]],["/saldo","Economia","Mostra o saldo de 🪙 coins",[]],["/servidor","Administração","Organiza a estrutura do servidor (canais e cargos)",["plano","aplicar","exportar","limpar"]],["/setup","Administração","Configura o VISYA neste servidor",["canal","cargo","ver"]],["/ship","Diversão","Calcula o % de combinação entre dois membros",[]],["/sn","Diversão","Responde sim ou não pra sua pergunta",[]],["/som","Diversão","Toca sons/memes do MyInstants no canal de voz",["tocar","buscar","alta","painel","debug","parar"]],["/sorte","Diversão","Revela a sua sorte do dia",[]],["/sorteio","Social","Cria e gerencia sorteios",["criar","encerrar"]],["/stop","Jogos","Começa um jogo de Stop (adedonha)",[]],["/sugestao","Social","Envia uma sugestão pra galera votar 👍/👎",[]],["/trabalhar","Economia","Pega um bico e ganha uma grana",[]],["/treino","Free Fire","Cria um treino/scrim com lista de presença",[]],["/unlock","Moderação","Destranca este canal",[]],["/vab","Jogos","Verdade ou desafio",[]],["/wordle","Jogos","Adivinhem a palavra de 5 letras — 6 tentativas, todo mundo joga junto",[]],["/zoeira","Diversão","Brincadeiras com imagem (procurado, preso, ship, medidor, lápide)",["procurado","preso","ship","medidor","lapide"]],["🌐 Traduzir","Menu","",[]],["📋 Ver ficha","Menu","",[]],["🧵 Resumir desde aqui","Menu","",[]],["🚩 Denunciar","Menu","",[]]];</script>
 <script>
-(function(){
-  /* ---- chat demo ---- */
-  const chat=document.getElementById('chat');
-  const av={ 'joão':['#f04747','J'], 'ana':['#faa61a','A'], 'pedro':['#43b581','P'], 'VISYA':['#5865f2','V'] };
-  const SEQ=[
-    {u:'joão',t:'/nivel'},
-    {u:'VISYA',b:1,t:'⭐ <b>joão</b> está no <b>nível 42</b> · rank #3 · 88.240 XP'},
-    {u:'ana',t:'/som booyah'},
-    {u:'VISYA',b:1,t:'🔊 Tocando <b>Booyah</b> em 🔊 Squad 1'},
-    {u:'pedro',t:'/sorteio Nitro 1d'},
-    {u:'VISYA',b:1,t:'🎉 Sorteio de <b>Nitro</b> criado! Clique pra participar.'},
-    {u:'joão',t:'/daily'},
-    {u:'VISYA',b:1,t:'🪙 <b>+250 coins</b>! Volte amanhã pra mais.'},
-  ];
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let i=0;
-  function add(){
-    const m=SEQ[i%SEQ.length];
-    const [c,ini]=av[m.u]||['#5865f2','?'];
-    const el=document.createElement('div');
-    el.className='msg'+(m.b?' bot':'');
-    const avInner=m.b?'<svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg>':ini;
-    el.innerHTML=`<div class="av" style="background:${c}">${avInner}</div><div class="bd"><div class="nm">${m.u}${m.b?'<span class="botbadge">BOT</span>':''}<span>hoje</span></div><div class="tx">${m.t}</div></div>`;
-    chat.appendChild(el);
-    while(chat.children.length>6) chat.removeChild(chat.firstChild);
-    i++;
-  }
-  add();add();add();
-  if(!reduce) setInterval(add, 1900);
+(() => {
+'use strict';
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---- IA (seção 05): conversa animada com "digitando…" ---- */
-  const ia=document.getElementById('iachat');
-  if(ia){
-    const IASEQ=[
-      {u:'joão',t:'@VISYA cria um canal 📢 avisos e ativa o anti-link lá'},
-      {u:'VISYA',b:1,typing:1100,t:'✅ Feito! Criei <b>#📢・avisos</b> e liguei o <b>anti-link</b> nele. Quer que eu deixe só a staff postando?'},
-      {u:'joão',t:'isso, e manda as boas-vindas no #entrada'},
-      {u:'VISYA',b:1,typing:1300,t:'🎉 Pronto — boas-vindas ativadas no <b>#entrada</b> e avisos travados pra staff. Mais alguma coisa?'},
-    ];
-    const iaMsg=(m)=>{
-      const el=document.createElement('div');
-      el.className='msg'+(m.b?' bot':'');
-      const c=m.b?'#5865f2':'#f04747', ini=m.b?'<svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg>':'J';
-      const nm=m.b?`VISYA<span class="botbadge">BOT</span><span>hoje</span>`:`joão <span>líder · hoje</span>`;
-      el.innerHTML=`<div class="av" style="background:${c}">${ini}</div><div class="bd"><div class="nm">${nm}</div><div class="tx">${m.t}</div></div>`;
-      return el;
-    };
-    const iaTyping=()=>{
-      const el=document.createElement('div');
-      el.className='msg bot typing';
-      el.innerHTML=`<div class="av" style="background:#5865f2"><svg style="width:20px;height:20px;color:#fff"><use href="#v"/></svg></div><div class="bd"><div class="nm">VISYA<span class="botbadge">BOT</span><span>hoje</span></div><div class="tx"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
-      return el;
-    };
-    if(reduce){ IASEQ.forEach(m=>ia.appendChild(iaMsg(m))); }
-    else{
-      let run=0;
-      const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
-      const play=async()=>{
-        const me=++run; ia.innerHTML='';
-        await wait(400); if(run!==me)return;
-        for(const m of IASEQ){
-          if(run!==me)return;
-          if(m.b){ const tp=iaTyping(); ia.appendChild(tp); await wait(m.typing||1100); if(run!==me){return;} tp.remove(); ia.appendChild(iaMsg(m)); }
-          else{ ia.appendChild(iaMsg(m)); }
-          await wait(m.b?1200:850);
-        }
-      };
-      const sec=document.getElementById('ia');
-      if('IntersectionObserver'in window && sec){
-        new IntersectionObserver((es)=>{es.forEach(e=>{ if(e.isIntersecting) play(); });},{threshold:.35}).observe(sec);
-      } else { play(); }
+/* Uma paleta quente/fria sem azul cromático: o que dá cor à página são os
+   itens, um de cada vez — nunca o fundo. */
+const CORES = ['#c8ff2e','#ff8a3d','#ff5a5f','#3ddad7','#b39dff','#ffd166','#7bd389','#f78ca0'];
+
+/* --------------------------------------------------------------- faixa */
+const PALAVRAS = ['moderação','níveis','economia','soundboard','ia','sorteios','jogos','tickets','música','modelos','backup','pix'];
+$('#faixa').innerHTML = [...PALAVRAS, ...PALAVRAS]
+  .map(p => '<span>' + esc(p) + ' <i>&#10038;</i></span>').join('');
+
+/* ------------------------------------------------------------ recursos */
+const RECURSOS = [
+  ['Moderação',         'Advertências, castigo, anti-raid, anti-flood e AutoMod nativo. A ordem sem esforço.'],
+  ['Níveis & XP',       'Ranking por mensagem e por voz, com cartão de nível gerado em imagem.'],
+  ['Economia & Loja',   'Coins, daily, cassino, loja de cargos e transferência entre membros.'],
+  ['Soundboard',        '400+ sons do Brasil na call, com busca por nome e painel de botões.'],
+  ['IA integrada',      'Conversa, toca música e configura o servidor — cada coisa com a sua permissão.'],
+  ['Onboarding & live', 'Recebe cada novo membro e avisa a galera quando você fica ao vivo.'],
+];
+$('#recursos').innerHTML = RECURSOS.map(([t, d], i) =>
+  '<article class="rec" style="--c:' + CORES[i % CORES.length] + '">'
+  + '<div class="num"><span>/' + String(i + 1).padStart(2, '0') + '</span><em>////</em></div>'
+  + '<h3>' + esc(t) + '</h3><p>' + esc(d) + '</p></article>').join('');
+
+/* --------------------------------------------------------------- jogos */
+const JOGOS = [
+  ['VELHA', 'O clássico 3x3 — desafie alguém.', '/jogodavelha'],
+  ['LIG-4', 'Alinhe 4 peças antes do rival.', '/connect4'],
+  ['FORCA', 'Adivinhe a palavra letra a letra.', '/forca'],
+  ['WORDLE', 'Descubra a palavra do dia.', '/wordle'],
+  ['ANAGRAMA', 'Desembaralhe a palavra.', '/anagrama'],
+  ['QUIZ', 'Perguntas de conhecimento geral.', '/quiz'],
+  ['STOP', 'Adedonha com a letra sorteada.', '/stop'],
+  ['NAVAL', 'Afunde a frota inimiga.', '/batalhanaval'],
+  ['CAÇA', 'Ache as palavras escondidas.', '/cacapalavras'],
+  ['MEMÓRIA', 'Encontre os pares.', '/memoria'],
+  ['VERDADE', 'Verdade ou desafio — escolha e encare.', '/vab'],
+  ['EU NUNCA', 'Confessa aí pra tropa.', '/eununca'],
+  ['CASSINO', 'Aposte suas coins na sorte.', '/cassino'],
+];
+$('#trilho').innerHTML = JOGOS.map(([p, d, c], i) =>
+  '<article class="jogo" style="--c:' + CORES[i % CORES.length] + '">'
+  + '<div class="topo"><span>' + String(i + 1).padStart(3, '0') + '</span><span>////</span></div>'
+  + '<div class="palavra">' + esc(p) + '</div>'
+  + '<div class="ds">' + esc(d) + '</div>'
+  + '<div class="cmd">' + esc(c) + '</div></article>').join('');
+
+/* ------------------------------------------------------------ comandos
+   A lista vem do REGISTRO do bot, não escrita à mão: a versão anterior
+   ainda anunciava /abraco, /roleta e /paineljogos, que sumiram quando os
+   comandos foram agrupados pra caber no teto de 100 do Discord. */
+const CMDS = window.__CMDS__;
+const CATS = ['Todos', ...new Set(CMDS.map(c => c[1]))];
+let cat = 'Todos';
+const sem = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+$('#fichas').innerHTML = CATS.map(c =>
+  '<button class="ficha' + (c === 'Todos' ? ' on' : '') + '" type="button" data-cat="'
+  + esc(c) + '">' + esc(c) + '</button>').join('');
+
+function pinta() {
+  const q = sem($('#q').value.trim());
+  const lista = CMDS.filter(([n, c, d]) =>
+    (cat === 'Todos' || c === cat)
+    && (!q || sem(n).includes(q) || sem(d).includes(q) || sem(c).includes(q)));
+
+  $('#conta').textContent = lista.length === CMDS.length
+    ? CMDS.length + ' comandos'
+    : lista.length + ' de ' + CMDS.length;
+
+  $('#cmds').innerHTML = lista.length
+    ? lista.map(([n, c, d, subs]) =>
+        '<article class="cmd"><div class="top"><code>' + esc(n) + '</code>'
+        + '<span class="cat">' + esc(c) + '</span></div><p>' + esc(d) + '</p>'
+        + (subs && subs.length > 1 ? '<div class="subs">' + subs.map(esc).join(' &middot; ') + '</div>' : '')
+        + '</article>').join('')
+    : '<div class="vazio">nenhum comando com &quot;' + esc($('#q').value) + '&quot;</div>';
+}
+$('#q').addEventListener('input', pinta);
+$$('#fichas .ficha').forEach(b => b.addEventListener('click', () => {
+  cat = b.dataset.cat;
+  $$('#fichas .ficha').forEach(x => x.classList.toggle('on', x === b));
+  pinta();
+}));
+pinta();
+
+/* Ctrl+K leva pra busca — o atalho que a barra de topo anuncia. */
+function focarBusca(e) {
+  if (e) e.preventDefault();
+  $('#comandos').scrollIntoView({ behavior: calmo ? 'auto' : 'smooth', block: 'start' });
+  setTimeout(() => $('#q').focus(), calmo ? 0 : 420);
+}
+$('#atalho').addEventListener('click', focarBusca);
+addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') focarBusca(e);
+  if (e.key === 'Escape' && document.activeElement === $('#q')) $('#q').blur();
+});
+
+/* -------------------------------------------- conversas que se escrevem */
+const AV = { 'joão': ['#ff8a3d', 'J'], 'ana': ['#3ddad7', 'A'], 'pedro': ['#7bd389', 'P'], 'VISYA': ['#c8ff2e', 'V'] };
+const COD = t => '<code style="font-family:var(--mono);color:var(--lim)">' + t + '</code>';
+
+function linha(quem, texto, bot) {
+  const par = AV[quem] || ['#6c6c70', quem[0].toUpperCase()];
+  const el = document.createElement('div');
+  el.className = 'msg';
+  el.innerHTML = '<span class="av" style="background:' + par[0] + '">' + esc(par[1]) + '</span>'
+    + '<div><div class="nome">' + esc(quem)
+    + (bot ? '<span class="tag">APP</span>' : '')
+    + '<span class="quando">hoje</span></div>'
+    + '<div class="txt">' + texto + '</div></div>';
+  return el;
+}
+
+function roteiro(alvo, falas, laco) {
+  const caixa = $(alvo);
+  if (!caixa) return;
+  // Sem animação pra quem pediu menos movimento: o conteúdo aparece inteiro.
+  if (calmo) { falas.forEach(f => caixa.appendChild(linha(f[0], f[1], f[2]))); return; }
+  let i = 0;
+  const passo = () => {
+    if (i >= falas.length) {
+      if (!laco) return;
+      setTimeout(() => { caixa.innerHTML = ''; i = 0; passo(); }, 4200);
+      return;
     }
-  }
+    const f = falas[i++];
+    caixa.appendChild(linha(f[0], f[1], f[2]));
+    caixa.scrollTop = caixa.scrollHeight;
+    setTimeout(passo, f[2] ? 1500 : 1000);
+  };
+  passo();
+}
 
-  /* ---- comandos: busca + filtro ---- */
-  const CMDS=[
-    ['/adv','Moderação','Adverte e registra um membro.'],['/listadv','Moderação','Lista advertências.'],['/rmadv','Moderação','Remove advertência.'],
-    ['/castigo','Moderação','Silencia por tempo (timeout).'],['/banimento','Moderação','Bane com motivo.'],['/limpar','Moderação','Apaga mensagens em massa.'],
-    ['/lock','Moderação','Tranca o canal.'],['/unlock','Moderação','Destranca o canal.'],['/lento','Moderação','Modo lento.'],
-    ['/antiflood','Moderação','Bloqueia flood.'],['/antilink','Moderação','Bloqueia links.'],['/antipalavra','Moderação','Filtro de palavrões.'],['/antitoxic','Moderação','Detecta toxicidade.'],
-    ['/marcar','Moderação','Marca membros em massa.'],['/promover','Moderação','Promove de cargo.'],['/rebaixar','Moderação','Rebaixa de cargo.'],
-    ['/nivel','Níveis','Seu cartão de nível (imagem).'],['/rank','Níveis','Ranking por XP.'],['/rep','Níveis','Dá reputação.'],
-    ['/saldo','Economia','Mostra suas coins.'],['/daily','Economia','Recompensa diária.'],['/pagar','Economia','Transfere coins.'],['/ricos','Economia','Ranking dos mais ricos.'],
-    ['/loja','Economia','Loja de cargos.'],['/darcoins','Economia','(ADM) Dá ou tira coins.'],['/apostar','Economia','Aposta no cassino.'],['/roleta','Economia','Roleta de apostas.'],['/slot','Economia','Caça-níquel.'],
-    ['/jogodavelha','Jogos','Jogo da velha.'],['/connect4','Jogos','Lig-4 (Connect 4).'],['/forca','Jogos','Jogo da forca.'],['/anagrama','Jogos','Desembaralhe a palavra.'],
-    ['/wordle','Jogos','Wordle em português.'],['/quiz','Jogos','Quiz de perguntas.'],['/stop','Jogos','Stop / Adedonha.'],['/batalhanaval','Jogos','Batalha naval.'],
-    ['/cacapalavras','Jogos','Caça-palavras.'],['/memoria','Jogos','Jogo da memória.'],['/vab','Jogos','Verdade ou desafio.'],['/eununca','Jogos','Eu nunca...'],
-    ['/ranking','Jogos','Ranking de vitórias.'],['/paineljogos','Jogos','Publica o hub de jogos.'],
-    ['/som','Diversão','Toca sons na call (400+).'],['/bola8','Diversão','Bola 8 mágica.'],['/casal','Diversão','Sorteia um casal.'],['/chance','Diversão','Chance de algo (%).'],
-    ['/charada','Diversão','Charadas.'],['/dado','Diversão','Rola um dado.'],['/escolher','Diversão','Escolhe entre opções.'],['/frase','Diversão','Frase aleatória.'],
-    ['/medidor','Diversão','Medidor de zoeira.'],['/moeda','Diversão','Cara ou coroa.'],['/ppt','Diversão','Pedra, papel, tesoura.'],['/quando','Diversão','Quando vai rolar?'],
-    ['/ship','Diversão','Combina dois membros.'],['/sorte','Diversão','Sua sorte do dia.'],['/sn','Diversão','Sim ou não.'],
-    ['/abraco','Interação','Abraça alguém.'],['/beijo','Interação','Beija alguém.'],['/cafune','Interação','Faz cafuné.'],['/soco','Interação','Dá um soco.'],
-    ['/tapa','Interação','Dá um tapa.'],['/mata','Interação','"Mata" alguém (zoeira).'],['/mordida','Interação','Morde alguém.'],
-    ['/guilda','Free Fire','Painel da guilda NEXT.'],['/honra','Free Fire','Honra/elogia um membro.'],['/treino','Free Fire','Marca treino da guilda.'],['/partida','Free Fire','Organiza uma partida.'],
-    ['/registrar','Free Fire','Registra seu ID de FF.'],['/agendarevento','Free Fire','Agenda evento.'],['/live','Free Fire','Anuncia sua live.'],['/destaques','Free Fire','Mural de clipes/destaques.'],
-    ['/mover','Voz','Move membro de call.'],['/puxar','Voz','Puxa alguém pra sua call.'],['/reunir','Voz','Reúne todos numa call.'],
-    ['/ia','IA','Fala com a IA do VISYA.'],['🌐 Traduzir','IA','Traduz mensagem (menu).'],
-    ['/setup','Utilidade','Configura o bot no servidor.'],['/painel','Utilidade','Publica painéis.'],['/painelverificar','Utilidade','Publica a verificação.'],
-    ['/autocargo','Utilidade','Cargos por botão/reação.'],['/autoresposta','Utilidade','Respostas automáticas.'],['/embed','Utilidade','Cria embed custom.'],['/legendas','Utilidade','Legendas prontas.'],
-    ['/parcerias','Utilidade','Gerencia parcerias.'],['/servidor','Utilidade','Infos do servidor.'],['/convites','Utilidade','Contador de convites.'],['/enquete','Utilidade','Enquete com botões.'],
-    ['/guia','Utilidade','Guia do servidor.'],['/lembrete','Utilidade','Agenda lembrete.'],['/sugestao','Utilidade','Envia sugestão.'],['/sorteio','Utilidade','Cria sorteio (giveaway).'],
-    ['/ping','Utilidade','Latência do bot.'],['/inativos','Utilidade','Lista inativos.'],['/membros','Utilidade','Contagem de membros.'],['/saidas','Utilidade','Quem saiu.'],
-    ['/perfil','Social','Perfil do membro.'],['/aniversario','Social','Registra aniversário.'],['📋 Ver ficha','Social','Ficha do membro (menu).'],
-  ];
-  const cats=['Todos',...[...new Set(CMDS.map(c=>c[1]))]];
-  const chips=document.getElementById('chips'), grid=document.getElementById('cmds'), q=document.getElementById('q');
-  let cat='Todos';
-  cats.forEach(c=>{const b=document.createElement('button');b.className='chip'+(c==='Todos'?' on':'');b.textContent=c;b.onclick=()=>{cat=c;[...chips.children].forEach(x=>x.classList.toggle('on',x.textContent===c));render();};chips.appendChild(b);});
-  function render(){
-    const term=(q.value||'').toLowerCase();
-    const list=CMDS.filter(c=>(cat==='Todos'||c[1]===cat)&&(c[0].toLowerCase().includes(term)||c[2].toLowerCase().includes(term)));
-    grid.innerHTML=list.length?list.map(c=>`<div class="cmd"><div class="cat">${c[1]}</div><code>${c[0]}</code><p>${c[2]}</p></div>`).join(''):'<div class="empty">Nada encontrado 🤔</div>';
-  }
-  q.addEventListener('input',render); render();
+roteiro('#chat', [
+  ['joão', COD('/nivel')],
+  ['VISYA', '&#11088; <b>joão</b> está no nível <b>42</b> &middot; rank #3 &middot; 88.240 XP', true],
+  ['ana', COD('/musica tocar') + ' bohemian rhapsody'],
+  ['VISYA', '&#127925; Tocando agora em &#128266; Squad 1 — <b>Bohemian Rhapsody</b>', true],
+  ['pedro', COD('/sorteio criar') + ' Nitro &middot; 1 dia'],
+  ['VISYA', '&#127881; Sorteio de <b>Nitro</b> criado. Clica pra participar!', true],
+], true);
 
-  /* ---- contadores ---- */
-  const stats=document.getElementById('stats');
-  function count(){
-    stats.querySelectorAll('b').forEach(b=>{
-      const n=+b.dataset.n, suf=b.dataset.suf||'', dur=1100, t0=performance.now();
-      (function step(now){const p=Math.min(1,(now-t0)/dur);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+ (p===1?suf: (suf&&p>.6?suf:''));if(p<1)requestAnimationFrame(step);})(t0);
-    });
-  }
-  if('IntersectionObserver'in window){const io=new IntersectionObserver((e)=>{if(e[0].isIntersecting){count();io.disconnect();}},{threshold:.4});io.observe(stats);}else count();
+roteiro('#iachat', [
+  ['joão', 'coloca uma música aí pra gente'],
+  ['VISYA', '&#127925; Tocando <b>Evidências</b> em &#128266; Sala 1. Boa escolha!', true],
+  ['ana', 'cria um canal de avisos e tranca pra staff'],
+  ['VISYA', 'Só a liderança mexe na estrutura — chama um admin que eu faço na hora.', true],
+  ['pedro', 'sou admin. cria o canal de avisos'],
+  ['VISYA', '&#9989; Criei <b>&#128227;・avisos</b> e deixei só a staff escrevendo.', true],
+], true);
 })();
 </script>
+</body>
+</html>

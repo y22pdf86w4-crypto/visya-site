@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VISYA — o bot completo da sua comunidade no Discord</title>
+<meta name="description" content="Moderação, níveis, economia, tickets, jogos e música com nó de áudio próprio. 103 comandos em português, 104 modelos de servidor prontos e um painel web pra configurar sem digitar comando.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/brand/favicon.png">
+<meta property="og:title" content="VISYA — o bot completo da sua comunidade">
+<meta property="og:description" content="103 comandos, 104 modelos de servidor e painel web. De guilda de jogo a time de vendas.">
+<meta property="og:image" content="assets/brand/visya-banner.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Space+Mono:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap">
+<style>
+:root{
+  /* Preto NEUTRO, não azulado: o roxo de antes tingia todo cinza da página e
+     era ele que deixava tudo com cara de "azul cromático".
+     A assinatura passa a ser uma só — verde-limão de terminal — e aparece
+     pouco: no cursor, no prompt, nos marcadores e no que está ativo.
+     O resto é preto e branco-osso, como convém a uma página técnica. */
+  --void:#0b0b0c; --void2:#121214; --panel:#17171a; --panel2:#1d1d21;
+  --line:#26262b; --line2:#3a3a42;
+  --ink:#f2f2ef; --ink2:#a5a5a0; --ink3:#6c6c70;
+  --lim:#c8ff2e;                       /* a assinatura */
+  --lim2:#9fd400;
+  --amb:#ff8a3d; --cor:#ff5a5f; --tea:#3ddad7; --lav:#b39dff;
+  --disc:#5865f2;                      /* só o botão do Discord, que é deles */
+  /* Serifa pra voz, mono pra máquina, sans pra texto corrido.
+     O contraste serifa×mono é a assinatura tipográfica da página. */
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --mono:"Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans:"Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+  --gut:clamp(16px, 4vw, 52px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+body{
+  margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  /* Textura de pontos: dá superfície ao preto sem pesar nada. Fica no body,
+     nunca em elementos `position:fixed` com filter:blur — três deles já
+     derrubaram esta página por estouro de GPU no celular. */
+  background-image:radial-gradient(rgba(242,242,239,.055) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+
+/* ---------------------------------------------------------- estrutura */
+.env{max-width:1320px;margin:0 auto;padding-inline:var(--gut);}
+.secao{padding-block:clamp(64px,10vw,124px);position:relative;}
+.risco{border-top:1px solid var(--line);}
+
+/* Marcadores de canto: a moldura técnica que emoldura a página. */
+.cantos{position:relative;}
+.cantos::before,.cantos::after{
+  content:attr(data-canto);position:absolute;top:-26px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--ink3);
+  text-transform:uppercase;pointer-events:none;
+}
+.cantos::before{left:0;}
+.cantos::after{content:attr(data-canto2);right:0;}
+
+/* ------------------------------------------------------ barra de topo */
+.prompt{
+  position:sticky;top:0;z-index:60;
+  background:rgba(11,11,12,.94);border-bottom:1px solid var(--line);
+}
+.prompt-in{
+  max-width:1320px;margin:0 auto;padding:0 var(--gut);
+  height:54px;display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:.78rem;
+}
+.cifrao{color:var(--lim);font-weight:700;flex:none;}
+.marca{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.06em;flex:none;text-decoration:none;}
+.marca svg{width:19px;height:19px;color:var(--lim);}
+.caminho{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;}
+.caminho::-webkit-scrollbar{display:none;}
+.caminho a{
+  color:var(--ink3);text-decoration:none;padding:5px 9px;border-radius:4px;
+  white-space:nowrap;transition:color .15s,background .15s;
+}
+.caminho a:hover,.caminho a:focus-visible{color:var(--lim);background:var(--panel);}
+.atalho{
+  flex:none;color:var(--ink3);border:1px solid var(--line2);border-radius:5px;
+  padding:4px 9px;font-size:.66rem;background:transparent;cursor:pointer;
+  font-family:var(--mono);transition:border-color .15s,color .15s;
+}
+.atalho:hover{border-color:var(--lim);color:var(--lim);}
+@media(max-width:700px){.atalho{display:none;} .prompt-in{gap:10px;}}
+
+/* ------------------------------------------------------------- botões */
+.btn{
+  font-family:var(--mono);font-weight:700;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.12em;
+  padding:15px 26px;border-radius:3px;cursor:pointer;text-decoration:none;
+  border:1px solid var(--line2);background:transparent;color:var(--ink);
+  display:inline-flex;gap:9px;align-items:center;
+  transition:background .16s,color .16s,transform .12s,border-color .16s;
+}
+.btn:hover{background:var(--ink);color:var(--void);border-color:var(--ink);transform:translateY(-2px);}
+/* O primário é o limão sobre preto: contraste alto, sem degradê.
+   Degradê colorido em botão era metade do "azul cromático". */
+.btn.p{background:var(--lim);border-color:var(--lim);color:#0b0b0c;}
+.btn.p:hover{background:#dbff6b;border-color:#dbff6b;color:#0b0b0c;}
+:focus-visible{outline:2px solid var(--lim);outline-offset:3px;}
+
+/* ------------------------------------------------------- tipos de texto */
+.olho{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink3);display:flex;align-items:center;gap:11px;margin-bottom:20px;
+}
+.olho::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line2),transparent);}
+h1,h2,h3{font-family:var(--serif);font-weight:900;line-height:1.02;letter-spacing:-.02em;margin:0;text-wrap:balance;}
+h2{font-size:clamp(2rem,5.2vw,3.5rem);}
+h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
+.sub{color:var(--ink2);font-size:1.02rem;max-width:58ch;margin:16px 0 0;}
+.mini{font-family:var(--mono);font-size:.68rem;color:var(--ink3);letter-spacing:.06em;}
