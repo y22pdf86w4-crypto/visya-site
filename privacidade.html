@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Política de Privacidade — VISYA</title>
+<meta name="description" content="O que o VISYA guarda, por quanto tempo, com quem compartilha e como apagar.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600&family=Space+Mono:wght@400&display=swap">
+<style>
+  :root{--void:#0b0b0c;--void2:#121214;--ink:#f2f2ef;--ink2:#b0b0ab;--ink3:#8a8a90;--line:#26262b;--lim:#c8ff2e;
+    --serif:"Fraunces",Georgia,serif;--disp:"Bricolage Grotesque",system-ui,sans-serif;--mono:"Space Mono",ui-monospace,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font-family:var(--disp);font-size:16px;line-height:1.6;padding-block:0 60px;padding-inline:20px}
+  header{max-width:760px;margin:0 auto;padding:22px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  header a{font-family:var(--mono);font-size:.78rem;color:var(--ink3);text-decoration:none;letter-spacing:.06em}
+  header a:hover{color:var(--lim)}
+  main{max-width:760px;margin:0 auto}
+  .olho{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:44px}
+  h1{font-family:var(--serif);font-weight:900;font-size:clamp(2rem,6vw,3.2rem);line-height:1;letter-spacing:-.02em;margin:8px 0 10px;text-wrap:balance}
+  .sub{color:var(--ink2);margin:0 0 34px;max-width:60ch}
+  h2{font-family:var(--serif);font-weight:700;font-size:1.35rem;margin:38px 0 10px;letter-spacing:-.01em}
+  p,li{color:var(--ink2);max-width:66ch}
+  strong{color:var(--ink)}
+  ul{padding-left:20px}
+  li{margin:6px 0}
+  table{border-collapse:collapse;width:100%;font-size:.95rem;margin:12px 0}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+  th{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+  .tab{overflow-x:auto}
+  code{font-family:var(--mono);font-size:.85em;color:var(--lim)}
+  .aviso{border:1px solid var(--line);border-left:3px solid var(--lim);background:var(--void2);padding:12px 14px;border-radius:6px;margin:16px 0}
+  footer{max-width:760px;margin:60px auto 0;padding-top:18px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.72rem;color:var(--ink3)}
+  footer a{color:var(--ink3)}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">← VISYA</a>
+  <a href="/termos.html">Termos de uso →</a>
+</header>
+<main>
+  <div class="olho">Política de privacidade · vigente desde 16 de setembro de 2026</div>
+  <h1>O que o VISYA guarda, e por quê.</h1>
+  <p class="sub">O VISYA é um bot para Discord. Ele só funciona guardando algumas coisas sobre os servidores onde está e sobre quem usa os comandos. Esta página diz exatamente o quê — sem juridiquês.</p>
+
+  <h2>1. Quem é o responsável</h2>
+  <p>O VISYA é operado por <strong>João Gabriel Reis</strong> ("nós"). Contato para qualquer assunto desta política: <strong>reisjoaog@hotmail.com</strong>.</p>
+
+  <h2>2. O que guardamos</h2>
+  <div class="tab">
+  <table>
+    <tr><th>Dado</th><th>Para quê</th><th>Por quanto tempo</th></tr>
+    <tr><td><strong>IDs do servidor, de canais e de cargos</strong> e as configurações que o administrador escolhe no painel</td><td>Fazer o bot funcionar do jeito que o servidor configurou (boas-vindas, logs, módulos ligados)</td><td>Enquanto o bot estiver no servidor</td></tr>
+    <tr><td><strong>ID do usuário</strong> e o que ele acumula nos jogos e na economia (XP, nível, moedas, inventário, reputação, vitórias)</td><td>Ranking, níveis e economia do servidor</td><td>Enquanto o bot estiver no servidor, ou até o usuário pedir remoção</td></tr>
+    <tr><td><strong>Textos que o usuário escreve no próprio perfil</strong> (bio, cor, capa)</td><td>Mostrar o cartão de perfil</td><td>Até o usuário apagar ou pedir remoção</td></tr>
+    <tr><td><strong>Conteúdo de mensagens</strong>, só quando: o bot é mencionado, a mensagem está num canal de IA, ou o módulo de moderação automática está ligado</td><td>Responder à IA, moderar automaticamente</td><td>Não é armazenado. É processado na hora e descartado; um histórico curto da conversa com a IA fica em memória por alguns minutos para manter o contexto</td></tr>
+    <tr><td><strong>Registros de moderação</strong> (advertências, castigos, banimentos, com autor e motivo)</td><td>Histórico que a equipe do servidor precisa</td><td>Enquanto o bot estiver no servidor</td></tr>
+    <tr><td><strong>Pedidos de música</strong> (o que foi pedido e por quem)</td><td>Fila e controles</td><td>Só enquanto a fila existe</td></tr>
+    <tr><td><strong>Credencial de pagamento do administrador</strong> (token do Mercado Pago), se ele ligar a loja</td><td>Gerar cobranças PIX do próprio servidor</td><td>Criptografada; nunca aparece de volta na tela; apagada quando o administrador desconectar</td></tr>
+    <tr><td><strong>Pedidos da loja</strong> (ID do comprador, ID do pagamento, produto, situação)</td><td>Entregar o que foi comprado e não entregar duas vezes</td><td>Enquanto o bot estiver no servidor</td></tr>
+    <tr><td><strong>Chave da Anthropic do servidor</strong>, se o administrador colar uma</td><td>A IA usar a conta do próprio servidor</td><td>Criptografada; apagada quando o administrador remover</td></tr>
+  </table>
+  </div>
+  <p>Não guardamos e-mail, senha, telefone, nem qualquer dado que o Discord não entregue ao bot por meio de sua API.</p>
+
+  <h2>3. Com quem compartilhamos</h2>
+  <ul>
+    <li><strong>Discord</strong> — é a plataforma; tudo passa pela API deles conforme os <a href="https://discord.com/terms" style="color:var(--lim)">termos do Discord</a>.</li>
+    <li><strong>Anthropic</strong> — as mensagens dirigidas à IA e as analisadas pela moderação automática são enviadas à API da Anthropic para gerar a resposta. Se o servidor usa a própria chave, o envio é feito em nome da conta do servidor.</li>
+    <li><strong>Mercado Pago</strong> — só quando a loja está ligada, e apenas os dados da cobrança (valor, descrição, referência do pedido).</li>
+    <li><strong>Fontes de música</strong> (YouTube Music, SoundCloud, Deezer) — recebem apenas o termo de busca, nunca quem pediu.</li>
+    <li><strong>Discloud</strong> — hospeda o bot e o banco de dados.</li>
+  </ul>
+  <p>Não vendemos dados. Não usamos os dados para publicidade.</p>
+
+  <h2>4. Onde ficam</h2>
+  <p>Em servidores da Discloud, em rede privada. Credenciais (pagamento e chave de IA) ficam cifradas com AES-256-GCM; a chave de cifragem não é armazenada junto com os dados.</p>
+
+  <h2>5. Seus direitos</h2>
+  <ul>
+    <li><strong>Ver e apagar seu perfil</strong>: pelo comando <code>/perfil</code> no servidor.</li>
+    <li><strong>Apagar tudo sobre você em um servidor</strong>: peça ao administrador do servidor, ou escreva para <strong>reisjoaog@hotmail.com</strong> informando seu ID do Discord e o servidor.</li>
+    <li><strong>Apagar tudo sobre um servidor</strong>: basta remover o bot; os dados daquele servidor são apagados em até 30 dias. Um administrador também pode pedir a remoção imediata pelo contato acima.</li>
+  </ul>
+  <div class="aviso">Atendemos pedidos de acesso e exclusão em até 15 dias, conforme a Lei Geral de Proteção de Dados (LGPD, Lei 13.709/2018).</div>
+
+  <h2>6. Menores de idade</h2>
+  <p>O VISYA segue a idade mínima do Discord. Não coletamos deliberadamente dados de menores de 13 anos.</p>
+
+  <h2>7. Mudanças nesta política</h2>
+  <p>Se mudar algo relevante, a data no topo desta página é atualizada e o aviso aparece no servidor de suporte do VISYA. Continuar usando o bot depois disso significa que você está de acordo.</p>
+</main>
+<footer>VISYA · <a href="/termos.html">termos de uso</a> · <a href="/">início</a></footer>
+</body>
+</html>
