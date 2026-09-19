@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bot de música para Discord — VISYA</title>
+<meta name="description" content="Como o VISYA toca música no Discord: acha a gravação certa antes de tocar, descarta prévia de 30 segundos e avisa quando a versão não é a do artista.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="assets/brand/favicon.png">
+<link rel="canonical" href="https://visya.app.br/musica.html">
+<meta property="og:title" content="Bot de música para Discord — VISYA">
+<meta property="og:description" content="Como o VISYA toca música no Discord: acha a gravação certa antes de tocar, descarta prévia de 30 segundos e avisa quando a versão não é a do artista.">
+<meta property="og:image" content="https://visya.app.br/assets/brand/visya-banner.png">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://visya.app.br/musica.html">
+<meta property="og:site_name" content="VISYA">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Space+Mono:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "Article",
+ "headline": "Bot de música para Discord — VISYA",
+ "description": "Como o VISYA toca música no Discord: acha a gravação certa antes de tocar, descarta prévia de 30 segundos e avisa quando a versão não é a do artista.",
+ "inLanguage": "pt-BR",
+ "url": "https://visya.app.br/musica.html",
+ "dateModified": "2026-09-19",
+ "image": "https://visya.app.br/assets/brand/visya-banner.png",
+ "author": {
+  "@type": "Organization",
+  "name": "VISYA",
+  "url": "https://visya.app.br/"
+ },
+ "publisher": {
+  "@type": "Organization",
+  "name": "VISYA",
+  "url": "https://visya.app.br/"
+ },
+ "isPartOf": {
+  "@type": "WebSite",
+  "name": "VISYA",
+  "url": "https://visya.app.br/"
+ }
+}
+</script>
+<style>
+:root{
+  /* Preto NEUTRO, não azulado: o roxo de antes tingia todo cinza da página e
+     era ele que deixava tudo com cara de "azul cromático".
+     A assinatura passa a ser uma só — verde-limão de terminal — e aparece
+     pouco: no cursor, no prompt, nos marcadores e no que está ativo.
+     O resto é preto e branco-osso, como convém a uma página técnica. */
+  --void:#0b0b0c; --void2:#121214; --panel:#17171a; --panel2:#1d1d21;
+  --line:#26262b; --line2:#3a3a42;
+  --ink:#f2f2ef; --ink2:#a5a5a0; --ink3:#6c6c70;
+  --lim:#c8ff2e;                       /* a assinatura */
+  --lim2:#9fd400;
+  --amb:#ff8a3d; --cor:#ff5a5f; --tea:#3ddad7; --lav:#b39dff;
+  --disc:#5865f2;                      /* só o botão do Discord, que é deles */
+  /* Serifa pra voz, mono pra máquina, sans pra texto corrido.
+     O contraste serifa×mono é a assinatura tipográfica da página. */
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --mono:"Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans:"Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+  --gut:clamp(16px, 4vw, 52px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+body{
+  margin:0;background:var(--void);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  /* Textura de pontos: dá superfície ao preto sem pesar nada. Fica no body,
+     nunca em elementos `position:fixed` com filter:blur — três deles já
+     derrubaram esta página por estouro de GPU no celular. */
+  background-image:radial-gradient(rgba(242,242,239,.055) 1px, transparent 1px);
+  background-size:26px 26px;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+
+/* ---------------------------------------------------------- estrutura */
+.env{max-width:1320px;margin:0 auto;padding-inline:var(--gut);}
+.secao{padding-block:clamp(64px,10vw,124px);position:relative;}
+.risco{border-top:1px solid var(--line);}
+
+/* Marcadores de canto: a moldura técnica que emoldura a página. */
+.cantos{position:relative;}
+.cantos::before,.cantos::after{
+  content:attr(data-canto);position:absolute;top:-26px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--ink3);
+  text-transform:uppercase;pointer-events:none;
+}
+.cantos::before{left:0;}
+.cantos::after{content:attr(data-canto2);right:0;}
+
+/* ------------------------------------------------------ barra de topo */
+.prompt{
+  position:sticky;top:0;z-index:60;
+  background:rgba(11,11,12,.94);border-bottom:1px solid var(--line);
+}
+.prompt-in{
+  max-width:1320px;margin:0 auto;padding:0 var(--gut);
+  height:54px;display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:.78rem;
+}
+.cifrao{color:var(--lim);font-weight:700;flex:none;}
+.marca{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.06em;flex:none;text-decoration:none;}
+.marca svg{width:19px;height:19px;color:var(--lim);}
+.caminho{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;}
+.caminho::-webkit-scrollbar{display:none;}
+.caminho a{
+  color:var(--ink3);text-decoration:none;padding:5px 9px;border-radius:4px;
+  white-space:nowrap;transition:color .15s,background .15s;
+}
+.caminho a:hover,.caminho a:focus-visible{color:var(--lim);background:var(--panel);}
+.atalho{
+  flex:none;color:var(--ink3);border:1px solid var(--line2);border-radius:5px;
+  padding:4px 9px;font-size:.66rem;background:transparent;cursor:pointer;
+  font-family:var(--mono);transition:border-color .15s,color .15s;
+}
+.atalho:hover{border-color:var(--lim);color:var(--lim);}
+@media(max-width:700px){.atalho{display:none;} .prompt-in{gap:10px;}}
+
+/* ------------------------------------------------------------- botões */
+.btn{
+  font-family:var(--mono);font-weight:700;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.12em;
+  padding:15px 26px;border-radius:3px;cursor:pointer;text-decoration:none;
+  border:1px solid var(--line2);background:transparent;color:var(--ink);
+  display:inline-flex;gap:9px;align-items:center;
+  transition:background .16s,color .16s,transform .12s,border-color .16s;
+}
+.btn:hover{background:var(--ink);color:var(--void);border-color:var(--ink);transform:translateY(-2px);}
+/* O primário é o limão sobre preto: contraste alto, sem degradê.
+   Degradê colorido em botão era metade do "azul cromático". */
+.btn.p{background:var(--lim);border-color:var(--lim);color:#0b0b0c;}
+.btn.p:hover{background:#dbff6b;border-color:#dbff6b;color:#0b0b0c;}
+:focus-visible{outline:2px solid var(--lim);outline-offset:3px;}
+
+/* ------------------------------------------------------- tipos de texto */
+.olho{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink3);display:flex;align-items:center;gap:11px;margin-bottom:20px;
+}
+.olho::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line2),transparent);}
+h1,h2,h3{font-family:var(--serif);font-weight:900;line-height:1.02;letter-spacing:-.02em;margin:0;text-wrap:balance;}
+h2{font-size:clamp(2rem,5.2vw,3.5rem);}
+h3{font-size:1.16rem;font-weight:700;letter-spacing:-.01em;}
+.sub{color:var(--ink2);font-size:1.02rem;max-width:58ch;margin:16px 0 0;}
+.mini{font-family:var(--mono);font-size:.68rem;color:var(--ink3);letter-spacing:.06em;}
+
+/* ---------------------------------------------------------------- capa */
+.capa{padding-block:clamp(48px,8vw,96px) clamp(40px,6vw,80px);}
+/* `1.06fr .94fr` parecia dizer "56% e 44%", mas track `fr` NAO encolhe abaixo
+   do min-content do que esta dentro dela. Com `white-space:nowrap` num titulo
+   de ate 15vw, o min-content da primeira coluna e a largura da palavra —
+   entao "ORGANIZA" empurrava a coluna e espremia o chat ate virar uma tira.
+   `minmax(0,...)` devolve o controle pra fracao; o minmax do card garante que
+   ele nunca afine. O titulo vira o unico que cede, e ele cede por fonte. */
+.capa-grade{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(330px,.94fr);
+  gap:clamp(28px,4vw,60px);align-items:center;}
+.capa-grade>*{min-width:0;}
+/* A fonte passa a medir a COLUNA (cqw), nao a janela (vw): e a coluna que tem
+   que caber a palavra, e ela e pouco mais da metade da tela. */
+.capa-grade>div:first-child{container-type:inline-size;}
+@media(max-width:940px){.capa-grade{grid-template-columns:1fr;}}
+/* Título em branco-osso sólido, com cursor piscando do lado. Sem degradê:
+   texto colorido em gradiente é justamente o efeito que a gente tirou. */
+.titulao{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(3rem,17cqw,9.5rem);line-height:.84;letter-spacing:-.045em;
+  margin:0 0 6px;color:var(--ink);display:flex;align-items:baseline;gap:.08em;
+  /* A palavra muda de largura enquanto digita. Sem altura fixa, a capa
+     inteira pulava a cada troca. */
+  min-height:.9em;
+}
+.titulao #palavra{white-space:nowrap;}
+@media(max-width:940px){.capa-grade>div:first-child{container-type:normal;}
+  .titulao{font-size:clamp(3rem,14vw,7rem);}}
+.titulao i{
+  font-style:normal;width:.085em;height:.62em;background:var(--lim);
+  display:inline-block;animation:cursor 1.15s steps(1) infinite;
+}
+@keyframes cursor{0%,49%{opacity:1}50%,100%{opacity:0}}
+.capa .lead{font-size:clamp(1.02rem,1.7vw,1.24rem);color:var(--ink2);max-width:46ch;margin:22px 0 30px;}
+.capa .cta{display:flex;gap:12px;flex-wrap:wrap;}
+.selos{display:flex;gap:26px;flex-wrap:wrap;margin-top:34px;padding-top:22px;border-top:1px solid var(--line);}
+.selo b{display:block;font-family:var(--serif);font-size:1.7rem;font-weight:900;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--ink);}
+.selo span{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);}
+
+/* janela de terminal — usada na capa, nos modelos, no painel e na IA */
+.janela{background:var(--void2);border:1px solid var(--line2);border-radius:8px;overflow:hidden;}
+.janela-topo{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.68rem;color:var(--ink3);
+}
+.bolas{display:flex;gap:5px;}
+.bolas i{width:9px;height:9px;border-radius:50%;background:var(--line2);}
+.bolas i:first-child{background:#ff5f57;} .bolas i:nth-child(2){background:#febc2e;} .bolas i:nth-child(3){background:#28c840;}
+.aovivo{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--lim);}
+.aovivo i{width:6px;height:6px;border-radius:50%;background:var(--lim);animation:pisca 1.9s infinite;}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.25}}
+.msgs{padding:15px;display:flex;flex-direction:column;gap:11px;min-height:270px;}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:sobe .3s both;}
+@keyframes sobe{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg .av{width:29px;height:29px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:.72rem;color:#0b0b0c;}
+.msg .nome{font-weight:700;font-size:.84rem;}
+.msg .tag{font-family:var(--mono);font-size:.54rem;background:var(--line2);color:var(--ink);
+  padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:5px;letter-spacing:.06em;}
+.msg .txt{font-size:.88rem;color:var(--ink2);line-height:1.45;}
+.msg .quando{font-family:var(--mono);font-size:.56rem;color:var(--ink3);margin-left:6px;}
+.term{padding:16px;font-family:var(--mono);font-size:.74rem;line-height:1.85;color:var(--ink2);}
+.term b{color:var(--ink);font-weight:700;display:block;}
+.term .liga{color:var(--lim);font-size:.62rem;}
+.term .dentro{padding-left:14px;}
+
+/* --------------------------------------------------------------- faixa */
+.faixa{border-block:1px solid var(--line);overflow:hidden;padding-block:13px;background:var(--void2);}
+.faixa-in{display:flex;width:max-content;animation:corre 34s linear infinite;}
+.faixa span{font-family:var(--mono);font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:0 26px;color:var(--ink2);white-space:nowrap;}
+.faixa span i{color:var(--lim);font-style:normal;}
+@keyframes corre{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.faixa:hover .faixa-in{animation-play-state:paused;}
+
+/* -------------------------------------------------------- cards de recurso */
+.recursos{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:42px;}
+@media(max-width:920px){.recursos{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:580px){.recursos{grid-template-columns:1fr;}}
+.rec{background:var(--void);padding:28px 24px 26px;position:relative;transition:background .2s;}
+.rec:hover{background:var(--void2);}
+.rec::before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;
+  background:var(--c);opacity:0;transition:opacity .2s;}
+.rec:hover::before{opacity:1;}
+.rec .num{font-family:var(--mono);font-size:.7rem;color:var(--c);letter-spacing:.14em;
+  display:flex;justify-content:space-between;margin-bottom:18px;}
+.rec .num em{font-style:normal;color:var(--ink3);}
+.rec h3{margin-bottom:9px;}
+.rec p{color:var(--ink2);font-size:.9rem;margin:0;}
+
+/* ------------------------------------------------------- trilho de jogos */
+.trilho{display:flex;gap:14px;overflow-x:auto;padding:38px 0 22px;
+  scroll-snap-type:x mandatory;scrollbar-width:thin;}
+.trilho::-webkit-scrollbar{height:7px;}
+.trilho::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px;}
+.jogo{
+  flex:0 0 232px;scroll-snap-align:start;min-height:212px;
+  background:var(--void2);border:1px solid var(--c);border-radius:6px;
+  padding:14px;display:flex;flex-direction:column;position:relative;
+  transition:transform .16s,background .16s;
+}
+.jogo:hover{transform:translateY(-4px);background:var(--panel);}
+.jogo .topo{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--ink3);}
+.jogo .palavra{
+  font-family:var(--serif);font-weight:900;font-size:1.72rem;line-height:.96;
+  letter-spacing:-.03em;color:var(--c);margin:auto 0 10px;
+}
+.jogo .ds{font-size:.78rem;color:var(--ink2);border-top:1px dashed var(--line2);padding-top:9px;}
+.jogo .cmd{font-family:var(--mono);font-size:.66rem;color:var(--ink3);margin-top:7px;}
+
+/* -------------------------------------------------------------- comandos */
+.busca{position:relative;margin-top:34px;}
+.busca .cifrao{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:.9rem;}
+.busca input{
+  width:100%;padding:16px 15px 16px 38px;font-family:var(--mono);font-size:.92rem;
+  color:var(--ink);background:var(--void2);border:1px solid var(--line2);border-radius:5px;outline:none;
+}
+.busca input::placeholder{color:var(--ink3);}
+.busca input:focus{border-color:var(--lim);box-shadow:0 0 0 3px rgba(200,255,46,.16);}
+.fichas{display:flex;gap:6px;flex-wrap:wrap;margin-top:15px;}
+.ficha{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:6px 12px;border:1px solid var(--line2);border-radius:99px;color:var(--ink3);
+  cursor:pointer;background:transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.ficha:hover{color:var(--ink);border-color:var(--ink3);}
+.ficha.on{color:#0b0b0c;background:var(--lim);border-color:var(--lim);font-weight:700;}
+.conta{font-family:var(--mono);font-size:.68rem;color:var(--ink3);margin-top:14px;}
+.cmds{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:18px;}
+.cmds>.cmd{background:var(--void);padding:14px 15px;transition:background .15s;}
+.cmds>.cmd:hover{background:var(--void2);}
+.cmds .cmd .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.cmds .cmd code{font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--lim);}
+.cmds .cmd .cat{font-family:var(--mono);font-size:.55rem;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink3);border:1px solid var(--line2);border-radius:99px;padding:1px 7px;}
+.cmds .cmd p{margin:6px 0 0;font-size:.82rem;color:var(--ink2);}
+.cmds .cmd .subs{font-family:var(--mono);font-size:.62rem;color:var(--ink3);margin-top:6px;word-break:break-word;}
+.vazio{grid-column:1/-1;background:var(--void);padding:40px;text-align:center;color:var(--ink3);font-family:var(--mono);font-size:.8rem;}
+
+/* ---------------------------------------------------------- dois blocos */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,3.5vw,48px);align-items:center;}
+@media(max-width:900px){.duo{grid-template-columns:1fr;}}
+.lista{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:12px;}
+.lista li{display:flex;gap:12px;align-items:flex-start;font-size:.94rem;color:var(--ink2);}
+.lista li b{color:var(--ink);font-weight:600;}
+.lista .mark{font-family:var(--mono);font-size:.68rem;color:var(--lim);flex:none;padding-top:3px;}
+
+/* números */
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);}
+.numero{background:var(--void);padding:30px 22px;text-align:center;}
+.numero b{display:block;font-family:var(--serif);font-weight:900;font-size:clamp(2.1rem,4.6vw,3.1rem);
+  line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);}
+.numero span{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink3);margin-top:9px;display:block;}
+
+/* perguntas */
+.faq{margin-top:34px;border-top:1px solid var(--line);}
+.faq details{border-bottom:1px solid var(--line);}
+.faq summary{
+  padding:19px 2px;cursor:pointer;list-style:none;display:flex;gap:14px;align-items:center;
+  font-family:var(--serif);font-weight:700;font-size:1.08rem;
+}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::after{content:"+";margin-left:auto;font-family:var(--mono);color:var(--ink3);font-size:1.2rem;}
+.faq details[open] summary::after{content:"−";color:var(--lim);}
+.faq .q{font-family:var(--mono);font-size:.64rem;color:var(--lim);flex:none;}
+.faq p{margin:0 0 20px 34px;color:var(--ink2);font-size:.93rem;max-width:70ch;}
+.faq code{font-family:var(--mono);font-size:.86em;color:var(--lim);}
+
+/* fechamento */
+.fim{text-align:center;padding-block:clamp(70px,11vw,140px);border-top:1px solid var(--line);}
+.fim h2{font-size:clamp(2.4rem,7vw,5rem);}
+.fim .olho{justify-content:center;}
+.fim .olho::after{display:none;}
+.fim .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px;}
+footer{border-top:1px solid var(--line);padding-block:34px 44px;}
+.pe{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.66rem;color:var(--ink3);}
+.pe a{color:var(--ink3);text-decoration:none;}
+.pe a:hover{color:var(--lim);}
+.pe nav{display:flex;gap:18px;flex-wrap:wrap;}
+.pe svg{color:var(--lim);}
+</style>
+
+<style>
+.tabela-wrap{overflow-x:auto;margin-top:22px;}
+.tabela{border-collapse:collapse;width:100%;font-size:.93rem;}
+.tabela th,.tabela td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:top;}
+.tabela th{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);}
+.tabela td code{font-family:var(--mono);color:var(--lim);}
+.tabela td:first-child{white-space:nowrap;}
+ul.lista{margin:20px 0 0;padding-left:20px;color:var(--ink2);}
+ul.lista li{margin:9px 0;max-width:62ch;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="v" viewBox="0 0 1500 1067.66"><path fill="currentColor" d="M771.69,944.01c-29.55-17.73-49.39,7.48-88.66,28.1-73.57,38.63-162.36,21.98-215.5-40.61-30.54-35.97-40.23-79.57-29.06-125.24,16.19-66.19-22.79-134.12-88.1-152.59-32.88-9.3-59.79-27.32-78.12-56.33-51.99-82.32-24.91-191.95,59.95-239.9l46.91-26.51c10.34-5.84,16.39-16.82,16.71-28.85.62-23.85-1.11-47.72,1-71.25,8.38-93.18,88.72-156.15,180.14-156.22l348.62-.27c90.83-.07,168.9,66.53,176.43,157.8,1.93,23.38.59,46.44,1.09,70.27.26,12.35,6.6,23.26,17.24,29.28l49.24,27.84c89.32,50.5,107.26,159.45,57,246.14l-175.31,302.33c-48.02,82.81-156.39,109.89-238.01,60.93l-41.57-24.94ZM720.42,878.01c7.53,12.73,17.82,19.09,30.8,18.83,12.6-.25,23.02-6.78,29.98-18.71l77.22-132.51,104.56-181.48,110.69-192.37c6.22-10.82,3.92-24.89-2.14-33.92-5.82-8.68-15.69-14.86-28.54-14.87l-585.81-.18c-14.17,0-24.38,6.02-30.62,15.62-6.46,9.94-7.06,23.34-.98,33.87l60.21,104.33c16.56,28.7,44.56,45.57,75.26,53.45,72.44,18.61,111.47,90.82,91.68,161.41-9.35,33.35-2.25,68.29,14.82,97.15l52.88,89.39Z"/></symbol></svg>
+
+<div class="prompt">
+  <div class="prompt-in">
+    <span class="cifrao">$</span>
+    <a class="marca" href="./" aria-label="VISYA — início"><svg aria-hidden="true"><use href="#v"/></svg>VISYA</a>
+    <nav class="caminho" aria-label="Páginas">
+      <a href="./">/início</a>
+      <a href="musica.html">/música</a>
+      <a href="niveis.html">/níveis</a>
+      <a href="economia.html">/economia</a>
+      <a href="moderacao.html">/moderação</a>
+      <a href="comandos.html">/comandos</a>
+    </nav>
+  </div>
+</div>
+
+<main id="topo">
+<section class="secao">
+  <div class="env cantos" data-canto="visya ▷" data-canto2="//// módulo de música">
+    <div class="olho">módulo de música</div>
+    <h1>Música no Discord<br>sem tocar a versão errada</h1>
+    <p class="sub">Fila, controles e nó de áudio próprio. E, principalmente, a parte que ninguém conta: como o bot decide qual gravação vai tocar.</p>
+  </div>
+</section>
+
+<section class="secao">
+  <div class="env">
+    <div class="olho">como funciona</div>
+    <h2>Ele procura a música<br>antes de tocar</h2>
+    
+    <p class="sub">A maior parte dos bots de música manda o nome que você digitou direto pra fonte de
+    áudio e toca o primeiro resultado. É por isso que tanta gente pede Eagles e ouve banda cover,
+    ou pede uma música e recebe a versão acelerada.</p>
+    <p class="sub">O VISYA faz em duas etapas. Primeiro descobre <strong>qual é a gravação</strong>
+    num catálogo de música, que devolve artista, título e duração certos. Só depois procura essa
+    gravação específica pra tocar, conferindo o nome e a duração. Versão que foge do tempo da
+    gravação original não entra: remix, acelerado e ao vivo quase nunca batem no mesmo segundo.</p>
+  </div>
+</section>
+<section class="secao">
+  <div class="env">
+    <div class="olho">o detalhe chato</div>
+    <h2>Prévia de 30 segundos<br>não passa</h2>
+    
+    <p class="sub">Parte das gravações oficiais é publicada como prévia: o catálogo anuncia a
+    duração cheia, o áudio entregue tem trinta segundos, e acaba como se a música tivesse
+    terminado. Sem erro, sem aviso.</p>
+    <p class="sub">O VISYA confere isso antes de tocar e descarta. Quando a única versão inteira
+    disponível não é a do artista, ele toca assim mesmo e <strong>avisa no aviso de "tocando
+    agora"</strong> que aquela versão foi enviada por outra pessoa. Um cover que toca inteiro é
+    melhor que o original que para no meio, mas você merece saber qual é qual.</p>
+    <p class="sub">Se a versão escolhida não abrir, ele desce pra próxima da mesma música em vez de
+    desistir e sair da chamada.</p>
+  </div>
+</section>
+<section class="secao">
+  <div class="env">
+    <div class="olho">o resto</div>
+    <h2>Fila, controles<br>e nó próprio</h2>
+    
+    <p class="sub">O áudio roda num nó dedicado, separado do bot. Isso importa na prática: uma
+    reinicialização do bot não derruba a música, e a sessão é retomada.</p>
+    <ul class="lista">
+      <li><strong>Fila</strong> com nome ou link, playlist inteira e ordem visível.</li>
+      <li><strong>Controles</strong> de pausar, retomar, pular, volume, repetir e parar.</li>
+      <li><strong>Sai sozinho</strong> quando fica sem ninguém na chamada, ou depois de um tempo parado que você define.</li>
+      <li><strong>Vigia</strong> que detecta música travada e destrava, em vez de ficar com "tocando agora" na tela sem som.</li>
+    </ul>
+    <p class="sub">Tudo em um comando só, <code>/musica</code>, com subcomandos.</p>
+  </div>
+</section>
+
+
+<section class="secao risco">
+  <div class="env">
+    <div class="olho">adicionar</div>
+    <h2>Põe o VISYA<br>no seu servidor</h2>
+    <p class="sub">É grátis, e os módulos que você não usar ficam desligados.</p>
+    <p style="margin-top:22px">
+      <a class="btn p" href="https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=1417774886134&scope=bot%20applications.commands">Adicionar ao Discord</a>
+      <a class="btn" href="https://painel.visya.app.br">Abrir o painel</a>
+    </p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="env pe">
+    <div style="display:flex;align-items:center;gap:9px">
+      <svg width="16" height="16" aria-hidden="true"><use href="#v"/></svg>
+      VISYA · 2026
+    </div>
+    <nav>
+      <a href="./">Início</a>
+      <a href="comandos.html">Comandos</a>
+      <a href="https://painel.visya.app.br" target="_blank" rel="noopener">Painel ↗</a>
+      <a href="termos.html">Termos</a>
+      <a href="privacidade.html">Privacidade</a>
+    </nav>
+    <div>feito no Brasil · pt-BR</div>
+  </div>
+</footer>
+</body>
+</html>
