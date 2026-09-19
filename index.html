@@ -9,8 +9,49 @@
 <link rel="icon" href="assets/brand/favicon.png">
 <meta property="og:title" content="VISYA — o bot completo da sua comunidade">
 <meta property="og:description" content="103 comandos, 104 modelos de servidor e painel web. De guilda de jogo a time de vendas.">
-<meta property="og:image" content="assets/brand/visya-banner.png">
+<!-- URL absoluta de proposito: o buscador e o Discord baixam a imagem de
+     fora do site, e caminho relativo nao resolve pra eles. -->
+<meta property="og:image" content="https://visya.app.br/assets/brand/visya-banner.png">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://visya.app.br/">
+<meta property="og:site_name" content="VISYA">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VISYA — o bot completo da sua comunidade no Discord">
+<meta name="twitter:description" content="103 comandos em português, 104 modelos de servidor e painel web. Moderação, níveis, economia, tickets, jogos e música.">
+<meta name="twitter:image" content="https://visya.app.br/assets/brand/visya-banner.png">
+<!-- Canonica: o site responde no dominio proprio e no endereco da Discloud.
+     Sem isto o buscador trata os dois como paginas diferentes e divide a
+     relevancia entre elas. -->
+<link rel="canonical" href="https://visya.app.br/">
+<!-- Dados estruturados: e o que permite o resultado aparecer como aplicativo
+     (categoria, preco, plataforma) em vez de um link de texto qualquer. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "VISYA",
+  "alternateName": "VISYA Bot",
+  "applicationCategory": "CommunicationApplication",
+  "applicationSubCategory": "Discord Bot",
+  "operatingSystem": "Discord",
+  "inLanguage": "pt-BR",
+  "url": "https://visya.app.br/",
+  "image": "https://visya.app.br/assets/brand/visya-banner.png",
+  "description": "Bot para Discord em português com moderação, níveis, economia, tickets, jogos e música. 103 comandos, 104 modelos de servidor prontos e painel web para configurar sem digitar comando.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+  "featureList": [
+    "Moderação automática",
+    "Níveis e XP por mensagem e por tempo em call",
+    "Economia com moeda própria e loja de cargos",
+    "Tickets de atendimento",
+    "Jogos no chat",
+    "Música com nó de áudio próprio",
+    "Painel web de configuração"
+  ],
+  "author": { "@type": "Organization", "name": "VISYA", "url": "https://visya.app.br/" }
+}
+</script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Space+Mono:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap">
 <style>
@@ -592,6 +633,8 @@ footer{border-top:1px solid var(--line);padding-block:34px 44px;}
       <a href="#modelos">Modelos</a>
       <a href="#comandos">Comandos</a>
       <a href="https://painel.visya.app.br" target="_blank" rel="noopener">Painel ↗</a>
+      <a href="termos.html">Termos</a>
+      <a href="privacidade.html">Privacidade</a>
     </nav>
     <div>feito no Brasil · pt-BR</div>
   </div>

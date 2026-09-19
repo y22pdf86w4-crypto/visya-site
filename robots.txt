@@ -1,0 +1,5 @@
+# visya.app.br
+User-agent: *
+Allow: /
+
+Sitemap: https://visya.app.br/sitemap.xml
