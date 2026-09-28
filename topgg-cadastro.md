@@ -45,11 +45,11 @@ Normalmente eles deixam escolher até três. Se for o caso, use
 
 | Campo | Valor |
 |---|---|
-| Website | `https://visya.app.br/` |
+| Website | `https://bot.visya.app.br/` |
 | Servidor de suporte | `https://discord.gg/kpKnNgErPH` |
 | Convite do bot | `https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=1417774886134&scope=bot%20applications.commands` |
-| Política de privacidade | `https://visya.app.br/privacidade.html` |
-| Termos de serviço | `https://visya.app.br/termos.html` |
+| Política de privacidade | `https://bot.visya.app.br/privacidade.html` |
+| Termos de serviço | `https://bot.visya.app.br/termos.html` |
 | GitHub | `https://github.com/y22pdf86w4-crypto/visya-site` |
 
 ## 6. Descrição longa
@@ -111,7 +111,7 @@ time de jogo e empresa.
 | `/painel` | Publica painéis do servidor |
 | `/ia` | Fala com o VISYA |
 
-A lista completa fica em <https://visya.app.br/#comandos>.
+A lista completa fica em <https://bot.visya.app.br/#comandos>.
 
 ## Painel web
 
@@ -123,7 +123,7 @@ IA própria.
 
 O VISYA apaga os dados de um servidor depois que é removido dele, com sete
 dias de carência para o caso de remoção por engano. Detalhes em
-<https://visya.app.br/privacidade.html>.
+<https://bot.visya.app.br/privacidade.html>.
 
 ---
 

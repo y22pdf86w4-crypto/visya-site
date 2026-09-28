@@ -2,7 +2,7 @@
 
 Página única do **VISYA**, um bot para Discord em português.
 
-**Site:** <https://visya.app.br/>
+**Site:** <https://bot.visya.app.br/>
 **Painel de configuração:** <https://painel.visya.app.br>
 **Adicionar ao seu servidor:** [link de convite](https://discord.com/oauth2/authorize?client_id=1541625357730586756&permissions=1417774886134&scope=bot%20applications.commands)
 **Ficha na vitrine do Discord:** <https://discord.com/discovery/applications/1541625357730586756>
@@ -50,8 +50,8 @@ O deploy é automático: push na branch principal publica no
 
 | Arquivo | Endereço |
 |---|---|
-| `index.html` | <https://visya.app.br/> |
-| `termos.html` | <https://visya.app.br/termos.html> |
-| `privacidade.html` | <https://visya.app.br/privacidade.html> |
+| `index.html` | <https://bot.visya.app.br/> |
+| `termos.html` | <https://bot.visya.app.br/termos.html> |
+| `privacidade.html` | <https://bot.visya.app.br/privacidade.html> |
 
 Contato: `reisjoaog@hotmail.com`

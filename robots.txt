@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://visya.app.br/sitemap.xml
+Sitemap: https://bot.visya.app.br/sitemap.xml

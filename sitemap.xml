@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://visya.app.br/</loc>
+    <loc>https://bot.visya.app.br/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/musica.html</loc>
+    <loc>https://bot.visya.app.br/musica.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/niveis.html</loc>
+    <loc>https://bot.visya.app.br/niveis.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/economia.html</loc>
+    <loc>https://bot.visya.app.br/economia.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/moderacao.html</loc>
+    <loc>https://bot.visya.app.br/moderacao.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/comandos.html</loc>
+    <loc>https://bot.visya.app.br/comandos.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/termos.html</loc>
+    <loc>https://bot.visya.app.br/termos.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://visya.app.br/privacidade.html</loc>
+    <loc>https://bot.visya.app.br/privacidade.html</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

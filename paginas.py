@@ -25,7 +25,7 @@ _head = ler('index.head.html')
 _css2 = ler('index.css2.html')
 ESTILO = _head[_head.index('<style>'):] + _css2[:_css2.index('</style>') + len('</style>')]
 
-SITE = 'https://visya.app.br'
+SITE = 'https://bot.visya.app.br'
 CONVITE = ('https://discord.com/oauth2/authorize?client_id=1541625357730586756'
            '&permissions=1417774886134&scope=bot%20applications.commands')
 
